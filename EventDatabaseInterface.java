@@ -1,8 +1,7 @@
 import java.util.ArrayList;
 public interface EventDatabaseInterface {
 
-    //Event list to store every event going on
-    private ArrayList<Event> eventList;
+
 
     //public method to get the list of events
     public ArrayList<Event> getEvents();
@@ -11,12 +10,12 @@ public interface EventDatabaseInterface {
     public void setEvents(ArrayList<Event>);
 
     //public method to add an event to the list of events
-    public void addEvent(Event) {
+    public default void addEvent(Event) {
         this.eventList.add(Event);
     }
 
 
-    public void rmEvent(int eventNum){
+    public void default rmEvent(int eventNum){
         try {
             this.eventList.remove(eventNum);
         }
