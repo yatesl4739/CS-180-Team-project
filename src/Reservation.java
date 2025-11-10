@@ -1,3 +1,11 @@
+/**
+ * Reservation
+ *
+ * @author Meraj Syeda
+ *
+ * @version 11/10/25
+ */
+
 public class Reservation implements ReservationInterface{
     private String user;
     private int numPeople;
