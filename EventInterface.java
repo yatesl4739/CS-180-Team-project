@@ -34,6 +34,8 @@ public interface EventInterface {
      */
     void setDay(long day);
 
+    public void setTotalRevenue(int newTotalRev);
+
     //getters
 
     /**
@@ -59,6 +61,8 @@ public interface EventInterface {
     char[][] getSeatingChart();
     long getTimeOfDay();
     long getDay();
+    long getTotalRevenue();
+
 
     /**
      * uses input from UI to create a reservation for this event.

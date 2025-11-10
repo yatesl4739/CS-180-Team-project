@@ -1,23 +1,24 @@
-public class Event {
+public class Event implements EventInterface{
     private String eventName;
     private double priceOfEvent;
-    private char[][] seatingChart; //stores available seats and shape of seats
+    private volatile char[][] seatingChart; //stores available seats and shape of seats
     private long timeOfDay; // time since epoch
     private long day;
-    private ReservationDatabase reservationDB = new ReservationDatabase();
+    private volatile ReservationDatabase reservationDB = new ReservationDatabase();
     private long totalRevenue;
 
     /**
      * constructor of object without taking totalRevenue as a modified input
      * totalRevenue is by default set to 0
+     *
      * @param eventName
      * @param priceOfEvent
      * @param seatingChart
      * @param timeOfDay
      * @param day
      */
-    public Event(String eventName, double priceOfEvent, char[][] seatingChart, long timeOfDay, long day){
-        this.eventName = eventName; 
+    public Event(String eventName, double priceOfEvent, char[][] seatingChart, long timeOfDay, long day) {
+        this.eventName = eventName;
         this.priceOfEvent = priceOfEvent;
         this.seatingChart = seatingChart;
         this.timeOfDay = timeOfDay;
@@ -35,8 +36,8 @@ public class Event {
      * @param day
      * @param totalRevenue
      */
-    public Event(String eventName, double priceOfEvent, char[][] seatingChart, long timeOfDay, long day, long totalRevenue){
-        this.eventName = eventName; 
+    public Event(String eventName, double priceOfEvent, char[][] seatingChart, long timeOfDay, long day, long totalRevenue) {
+        this.eventName = eventName;
         this.priceOfEvent = priceOfEvent;
         this.seatingChart = seatingChart;
         this.timeOfDay = timeOfDay;
@@ -47,7 +48,7 @@ public class Event {
 
     //getters setters
 
-    public void setEventName(String eventName){
+    public void setEventName(String eventName) {
         this.eventName = eventName;
     }
 
@@ -55,7 +56,7 @@ public class Event {
         this.priceOfEvent = priceOfEvent;
     }
 
-    public void setSeatingChart(char[][] seatingChart) {
+    public synchronized void setSeatingChart(char[][] seatingChart) {
         this.seatingChart = seatingChart;
     }
 
@@ -67,15 +68,19 @@ public class Event {
         this.day = day;
     }
 
-    public String getEventName(){
-        return eventName; 
+    public void setTotalRevenue(int newTotalRev) {
+        this.totalRevenue = newTotalRev;
+    }
+
+    public String getEventName() {
+        return eventName;
     }
 
     public double getPriceOfEvent() {
         return priceOfEvent;
     }
 
-    public char[][] getSeatingChart() {
+    public synchronized char[][] getSeatingChart() {
         return seatingChart;
     }
 
@@ -87,8 +92,13 @@ public class Event {
         return day;
     }
 
+    public long getTotalRevenue() {
+        return totalRevenue;
+    }
+
     /**
      * uses input from UI to create a reservation for this event.
+     *
      * @param x
      * @param y
      * @param user
@@ -97,7 +107,7 @@ public class Event {
      * @param date
      * @return boolean represents if the reservation was created properly
      */
-    public boolean createReservation(int[] x, int[] y, String user, int numPeople, long timeOfReservation, long date) {
+    public synchronized boolean createReservation(int[] x, int[] y, String user, int numPeople, long timeOfReservation, long date) {
         //array of x values represents x values of seats reserved
         //array of y values represents y values of sears reserved
 
@@ -128,14 +138,6 @@ public class Event {
                 totalCostOfReservation, x, y));
         return true;
     }
-
-
-
-
-    }
-
-
-
 
 
 }
