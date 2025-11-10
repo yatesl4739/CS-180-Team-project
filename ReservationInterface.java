@@ -20,7 +20,7 @@ public interface ReservationInterface {
 
     /**
      * get the date of the year when the resrevation is occuring
-     * @return long where the number is days since epoch
+     * @return the date of the reservation
      */
     public long getDate();
 

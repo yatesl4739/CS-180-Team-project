@@ -9,9 +9,22 @@ public class Reservation implements ReservationInterface{
     private int[] reservedY;
     private Event event;
 
-    //constructor
+    /**
+     * constructor of object
+     * @param user
+     * @param numPeople
+     * @param timeOfReservation
+     * @param date
+     * @param price
+     * @param x 
+     * @param y
+     */
     public Reservation(Event event, User user, int numPeople, long timeOfReservation, long date,
                        double price, int[] x, int[] y) {
+
+    
+    public Reservation(String user, int numPeople, long timeOfReservation, long date,
+                       double price, int[][] reservedSeats) {
         this.user = user;
         this.numPeople = numPeople;
         this.timeOfReservation = timeOfReservation;
@@ -140,6 +153,5 @@ public class Reservation implements ReservationInterface{
         return "Reservation: \n User: " + user + "\n Time Of Reservation: " + timeOfReservation +
                 "\n Date: " + date + "\n Price: " + price;
     }
-    
 
 }

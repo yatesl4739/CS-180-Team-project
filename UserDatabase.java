@@ -1,44 +1,104 @@
 import java.util.ArrayList;
 
-public class UserDatabase implements UserDatbaseInterface {
+/**
+ * UserDatabase
+ * <p>
+ * This program stores an ArrayList of Users.
+ *
+ * @author Chelsea Zhao, lab section L12
+ * @version November 10, 2025
+ *
+ */
 
-    private ArrayList<User> userDb = new ArrayList<User>();
+public class UserDatabase implements UserDatabaseInterface {
 
-    // Constructors
+    private ArrayList<User> userDb;  // list of users
+    Object lock = new Object();  // lock for synchronization
 
-    public UserDatabase() { }
+    /**
+     * Constructor given no parameters, creates empty list
+     */
+    public UserDatabase() {
+        ArrayList<User> userDb = new ArrayList<User>();
+    }
 
+    /**
+     * Constructor given a list of Users, sets list to given list
+     *
+     * @param list of Users given
+     */
     public UserDatabase(ArrayList<User> userDb) {
         this.userDb = userDb;
     }
 
+    /**
+     * Constructor given a single User, creates list with User added
+     *
+     * @param single given User
+     */
     public UserDatabase(User u) {
+        ArrayList<User> userDb = new ArrayList<User>();
         userDb.add(u);
     }
 
-    // Get/Set
-
+    /**
+     * Sets list of Users
+     *
+     * @param given list of Users
+     */
     public void setUsers(ArrayList<User> users) {
-        userDb = users;
+        synchronized (lock) {
+            userDb = users;
+        }
     }
 
+    /**
+     * Returns list of Users
+     *
+     * @return list of Users
+     */
     public ArrayList<User> getUserDb() {
         return userDb;
     }
 
-    // Add User
+    /**
+     * Adds a user to the list
+     *
+     * @param given User object
+     */
     public void addUser(User u) {
-        userDb.add(u);
+        synchronized (lock) {
+            userDb.add(u);
+        }
     }
 
-    // Remove User by object, return true if successful
+    /**
+     * Removes a user from the list by object, returns true if successful
+     *
+     * @param given User object
+     * @return boolean representing success
+     */
     public boolean removeUser(User u) {
-        return userDb.remove(u);
+        synchronized (lock) {
+            return userDb.remove(u);
+        }
     }
 
-    // Remove User by index, return true if succesful
+    /**
+     * Removes a user from the list by index, returns true if successful
+     *
+     * @param index of user
+     * @return boolean representing success
+     */
     public boolean removeUser(int index) {
-        return userDb.remove(index);
+        synchronized (lock) {
+            try {
+                userDb.remove(index);
+                return true;
+            } catch (IndexOutOfBoundsException e) {
+                return false;
+            }
+        }
     }
 
 }
