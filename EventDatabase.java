@@ -1,5 +1,9 @@
 import java.util.ArrayList;
 
+/**
+ * database that manages all the events.
+ * holds all event objects and can be used as an interface to easily acess and mofify events.
+ */
 public class EventDatabase implements EventDatabaseInterface{
     private ArrayList<Event> eventList = new ArrayList<Event>();
 
@@ -23,6 +27,12 @@ public class EventDatabase implements EventDatabaseInterface{
         return eventList;
     }
 
+    /**
+     * taken an entire array list of events as input
+     * sets the current events in the event database as the new list
+     *
+     * @param listInput
+     */
     public void setEvents(ArrayList<Event> listInput) {
         this.eventList = listInput;
     }
