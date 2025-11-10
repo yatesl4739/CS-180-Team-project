@@ -5,7 +5,7 @@ import java.util.ArrayList;
  * holds all event objects and can be used as an interface to easily acess and mofify events.
  */
 public class EventDatabase implements EventDatabaseInterface{
-    private ArrayList<Event> eventList = new ArrayList<Event>();
+    private volatile ArrayList<Event> eventList = new ArrayList<Event>();
 
     //pass nothing
     public EventDatabase() {
@@ -17,13 +17,20 @@ public class EventDatabase implements EventDatabaseInterface{
         eventList.add(singleEvent);
     }
     //pass list of events
+
+
     public EventDatabase(ArrayList<Event> eventList) {
         this.eventList = eventList;
     }
 
 
     //getters setters
-    public ArrayList<Event> getEvents() {
+
+    /**
+     * get back the entire array list of saved events
+     * @return ArrayList<Events> of all the events in the event databse
+     */
+    public synchronized ArrayList<Event> getEvents() {
         return eventList;
     }
 
@@ -33,7 +40,7 @@ public class EventDatabase implements EventDatabaseInterface{
      *
      * @param listInput
      */
-    public void setEvents(ArrayList<Event> listInput) {
+    public synchronized void setEvents(ArrayList<Event> listInput) {
         this.eventList = listInput;
     }
 
@@ -42,7 +49,7 @@ public class EventDatabase implements EventDatabaseInterface{
      * Public method to add a single event to the list of events
      * @param eventInput
      */
-    public void addEvent(Event eventInput) {
+    public synchronized void addEvent(Event eventInput) {
         this.eventList.add(eventInput);
     }
 
@@ -50,7 +57,7 @@ public class EventDatabase implements EventDatabaseInterface{
      * given an int, the event at that index in eventList will be removed.
      * @param eventNum
      */
-    public void rmEvent(int eventNum){
+    public synchronized void rmEvent(int eventNum){
         try {
             this.eventList.remove(eventNum);
         }
