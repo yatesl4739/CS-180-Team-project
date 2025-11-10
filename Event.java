@@ -1,4 +1,4 @@
-public class Event implements EventInterface{
+public class Event implements EventInterface {
     private String eventName;
     private double priceOfEvent;
     private volatile char[][] seatingChart; //stores available seats and shape of seats
