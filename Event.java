@@ -1,4 +1,5 @@
 public class Event {
+    private String eventName;
     private double priceOfEvent;
     private char[][] seatingChart; //stores available seats and shape of seats
     private long timeOfDay; // time since epoch
