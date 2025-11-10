@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.io.*;
 
 /**
  * ReservationDatabase
@@ -6,14 +7,15 @@ import java.util.ArrayList;
  * @author Meraj Syeda
  *
  * @version 11/10/25
+ *
+ * a threadsafe database that manages all reservations made and implements ReservationDatabaseInterface
+ * supports adding and removing reservations as well as saving/loading from a file
  */
 
-/**
- * database that manages all reservations made and implements ReservationDatabaseInterface
- * can be used to add and remove reservations
- */
+public class ReservationDatabase implements ReservationDatabaseInterface, Serializable {
 
-public class ReservationDatabase implements ReservationDatabaseInterface{
+    private static final long serialVersionUID = 1L;
+
     private ArrayList<Reservation> reservationList; // an arraylist of all existing reservations
 
     // constructor, passed nothing
@@ -27,11 +29,11 @@ public class ReservationDatabase implements ReservationDatabaseInterface{
     }
 
     // getter and setter
-    public ArrayList<Reservation> getReservations() {
-        return reservationList;
+    public synchronized ArrayList<Reservation> getReservations() {
+        return new ArrayList<>(reservationList);
     }
 
-    public void setReservations(ArrayList<Reservation> listInput) {
+    public synchronized void setReservations(ArrayList<Reservation> listInput) {
         this.reservationList = listInput;
     }
 
@@ -40,7 +42,7 @@ public class ReservationDatabase implements ReservationDatabaseInterface{
      * adds that to the list of existing reservations
      * @param reservation
      */
-    public void addReservation(Reservation reservation) {
+    public synchronized void addReservation(Reservation reservation) {
         this.reservationList.add(reservation);
     }
 
@@ -49,8 +51,10 @@ public class ReservationDatabase implements ReservationDatabaseInterface{
      * from the list of existing reservations
      * @param index
      */
-    public void removeReservation(int index) {
-        this.reservationList.remove(index);
+    public synchronized void removeReservation(int index) {
+        if (index >= 0 && index < reservationList.size()) {
+            this.reservationList.remove(index);
+        }
     }
 
     /**
@@ -59,7 +63,7 @@ public class ReservationDatabase implements ReservationDatabaseInterface{
      * @param username
      * @return the reservations under that specific user
      */
-    public ArrayList<Reservation> getUserReservations(String username) {
+    public synchronized ArrayList<Reservation> getUserReservations(String username) {
         ArrayList<Reservation> userReservations = new ArrayList<>();
         for (Reservation res : reservationList) {
             if (res.getUser().equals(username)) {
@@ -68,4 +72,36 @@ public class ReservationDatabase implements ReservationDatabaseInterface{
         }
         return userReservations;
     }
+
+    // file i/o methods
+
+    /**
+     * saves the current database to a file
+     * @param filename the name of the file to save to
+     */
+    public synchronized void saveToFile(String filename) {
+        try(ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filename))) {
+            out.writeObject(reservationList);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Loads the database from a file
+     * @param filename the name of the file to load from
+     */
+    public synchronized void loadFromFile(String filename) {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename))) {
+            this.reservationList = (ArrayList<Reservation>) in.readObject();
+        } catch (FileNotFoundException e) {
+            System.out.println("No existing database found. Starting fresh.");
+            this.reservationList = new ArrayList<>();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            this.reservationList = new ArrayList<>();
+        }
+    }
+
+
 }
