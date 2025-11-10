@@ -1,10 +1,10 @@
 public class Event implements EventInterface {
     private String eventName;
     private double priceOfEvent;
-    private char[][] seatingChart; //stores available seats and shape of seats
+    private volatile char[][] seatingChart; //stores available seats and shape of seats
     private long timeOfDay; // time since epoch
     private long day;
-    private ReservationDatabase reservationDB = new ReservationDatabase();
+    private volatile ReservationDatabase reservationDB = new ReservationDatabase();
     private long totalRevenue;
 
     /**
@@ -56,7 +56,7 @@ public class Event implements EventInterface {
         this.priceOfEvent = priceOfEvent;
     }
 
-    public void setSeatingChart(char[][] seatingChart) {
+    public synchronized void setSeatingChart(char[][] seatingChart) {
         this.seatingChart = seatingChart;
     }
 
@@ -68,6 +68,10 @@ public class Event implements EventInterface {
         this.day = day;
     }
 
+    public void setTotalRevenue(int newTotalRev) {
+        this.totalRevenue = newTotalRev;
+    }
+
     public String getEventName() {
         return eventName;
     }
@@ -76,7 +80,7 @@ public class Event implements EventInterface {
         return priceOfEvent;
     }
 
-    public char[][] getSeatingChart() {
+    public synchronized char[][] getSeatingChart() {
         return seatingChart;
     }
 
@@ -86,6 +90,10 @@ public class Event implements EventInterface {
 
     public long getDay() {
         return day;
+    }
+
+    public long getTotalRevenue() {
+        return totalRevenue;
     }
 
     /**
@@ -99,7 +107,7 @@ public class Event implements EventInterface {
      * @param date
      * @return boolean represents if the reservation was created properly
      */
-    public boolean createReservation(int[] x, int[] y, User user, int numPeople, long timeOfReservation, long date) {
+    public synchronized boolean createReservation(int[] x, int[] y, String user, int numPeople, long timeOfReservation, long date) {
         //array of x values represents x values of seats reserved
         //array of y values represents y values of sears reserved
 
@@ -130,4 +138,6 @@ public class Event implements EventInterface {
                 totalCostOfReservation, x, y));
         return true;
     }
+
+
 }
