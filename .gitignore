@@ -8,3 +8,5 @@
 /dataSources.local.xml
 #dont bring the idea folder
 /.idea
+#iml file
+/teamProject.iml
