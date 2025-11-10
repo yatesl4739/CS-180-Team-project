@@ -16,7 +16,7 @@ public class EventTest {
         );
         Event e = new Event("DJ Khalid", 10.0, seatingChart, 360, date);
         assertEquals("Testing event name","DJ Khalid", e.getEventName());
-        assertEquals("Testing price of event",10.0, e.getPriceOfEvent());
+        assertEquals("Testing price of event",10.0, e.getPriceOfEvent(), 0.001);
         assertEquals("Testing time of day", 360, e.getTimeOfDay());
         assertEquals("Testing date",date, e.getDay());
         assertArrayEquals("Testing seating chart", seatingChart, e.getSeatingChart());
@@ -45,8 +45,8 @@ public class EventTest {
         e.setSeatingChart(newChart);
 
         assertEquals("Benson Boone", e.getEventName());
-        assertEquals(15.0, e.getPriceOfEvent());
-        assertEquals(429, e.getTimeOfDay());
+        assertEquals(15.0, e.getPriceOfEvent(), 0.001);
+        assertEquals(420, e.getTimeOfDay());
         assertEquals(date + 1, e.getDay());
         assertArrayEquals(newChart, e.getSeatingChart());
     }
