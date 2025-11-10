@@ -10,12 +10,14 @@ public class Event {
     /**
      * constructor of object without taking totalRevenue as a modified input
      * totalRevenue is by default set to 0
+     * @param eventName
      * @param priceOfEvent
      * @param seatingChart
      * @param timeOfDay
      * @param day
      */
-    public Event(double priceOfEvent, char[][] seatingChart, long timeOfDay, long day){
+    public Event(String eventName, double priceOfEvent, char[][] seatingChart, long timeOfDay, long day){
+        this.eventName = eventName; 
         this.priceOfEvent = priceOfEvent;
         this.seatingChart = seatingChart;
         this.timeOfDay = timeOfDay;
@@ -26,13 +28,15 @@ public class Event {
     /**
      * constructor of object where totalRevenue is not set to default
      *
+     * @param eventName
      * @param priceOfEvent
      * @param seatingChart
      * @param timeOfDay
      * @param day
      * @param totalRevenue
      */
-    public Event(double priceOfEvent, char[][] seatingChart, long timeOfDay, long day, long totalRevenue){
+    public Event(String eventName, double priceOfEvent, char[][] seatingChart, long timeOfDay, long day, long totalRevenue){
+        this.eventName = eventName; 
         this.priceOfEvent = priceOfEvent;
         this.seatingChart = seatingChart;
         this.timeOfDay = timeOfDay;
@@ -42,6 +46,10 @@ public class Event {
 
 
     //getters setters
+
+    public void setEventName(String eventName){
+        this.eventName = eventName;
+    }
 
     public void setPriceOfEvent(double priceOfEvent) {
         this.priceOfEvent = priceOfEvent;
@@ -57,6 +65,10 @@ public class Event {
 
     public void setDay(long day) {
         this.day = day;
+    }
+
+    public String getEventName(){
+        return eventName; 
     }
 
     public double getPriceOfEvent() {
