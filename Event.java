@@ -107,7 +107,7 @@ public class Event implements EventInterface {
      * @param date
      * @return boolean represents if the reservation was created properly
      */
-    public synchronized boolean createReservation(int[] x, int[] y, String user, int numPeople, long timeOfReservation, long date) {
+    public synchronized boolean createReservation(int[] x, int[] y, User user, int numPeople, long timeOfReservation, long date) {
         //array of x values represents x values of seats reserved
         //array of y values represents y values of sears reserved
 

@@ -30,9 +30,6 @@ public class Reservation implements ReservationInterface{
     public Reservation(Event event, User user, int numPeople, long timeOfReservation, long date,
                        double price, int[] x, int[] y) {
 
-    
-    public Reservation(String user, int numPeople, long timeOfReservation, long date,
-                       double price, int[][] reservedSeats) {
         this.user = user;
         this.numPeople = numPeople;
         this.timeOfReservation = timeOfReservation;
