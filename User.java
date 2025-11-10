@@ -1,3 +1,15 @@
+/**
+ * User
+ *
+ * This program represents a User that can
+ * make reservations.
+ *
+ * @author Chelsea Zhao, lab section L12
+ *
+ * @version November 10, 2025
+ *
+ */
+
 public class User implements UserInterface {
 
     private String username;  // User's username
