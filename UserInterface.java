@@ -1,9 +1,6 @@
 public interface UserInterface {
 
-    private String username;
-    private String password;
 
-    private ReservationDatabase reservationDb;
 
     public void setUsername(String username);
     public void setPassword(String password);

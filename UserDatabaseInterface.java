@@ -1,8 +1,8 @@
 import java.util.ArrayList;
 
-public interface UserDataBaseInterface {
+public interface UserDatabaseInterface {
 
-    private ArrayList<User> userDb;
+    //private ArrayList<User> userDb;
 
     public void setUsers(ArrayList<User> users);
 
