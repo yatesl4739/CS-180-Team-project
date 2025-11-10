@@ -10,7 +10,7 @@ import java.util.ArrayList;
  *
  */
 
-public class UserDatabase implements UserDatbaseInterface {
+public class UserDatabase implements UserDatabaseInterface {
 
     private ArrayList<User> userDb;  // list of users
     Object lock = new Object();  // lock for synchronization

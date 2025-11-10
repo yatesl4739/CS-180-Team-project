@@ -104,7 +104,7 @@ public class User implements UserInterface {
      * @param index
      */
     public void removeReservation(int index) {
-        cost -= reservationDb.getReservations()[index].getPrice();
+        cost -= reservationDb.getReservations().get(index).getPrice();
         reservationDb.removeReservation(index);
     }
 }
