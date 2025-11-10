@@ -29,5 +29,37 @@ public class RunLocalTest {
             }
         }
     }
+
+    public static class TestCase {
+        private final PrintStream originalOutput = Stream.out;
+        private final InputStream originalSysin = System.in;
+
+
+        private ByteArrayInputStream testIn;
+        private ByteArrayOutputStream testOut;
+
+
+        public void outputStart() {
+            testOut = new ByteArrayOutputStream();
+            System.setOut(new PrintStream(testOut));
+        }
+
+
+        public void restoreInputOutput() {
+            System.setIn(originalSysin);
+            System.setOut(originalOutput);
+        }
+
+
+        public void recieveInput(String input) {
+            testIn = new ByteArrayInputStream(input.getBytes());
+            System.setIn(testIn);
+        }
+
+
+        public String getOutput() {
+            return testOut.toString();
+        }
+    }
 }
 
