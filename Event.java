@@ -4,7 +4,7 @@ public class Event {
     private char[][] seatingChart; //stores available seats and shape of seats
     private long timeOfDay; // time since epoch
     private long day;
-    private ReservationDatabase reservatinDB = new ReservationDatabase();
+    private ReservationDatabase reservationDB = new ReservationDatabase();
     private long totalRevenue;
 
     /**
