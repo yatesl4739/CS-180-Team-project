@@ -1,6 +1,14 @@
 import java.util.ArrayList;
 
 /**
+ * ReservationDatabase
+ *
+ * @author Meraj Syeda
+ *
+ * @version 11/10/25
+ */
+
+/**
  * database that manages all reservations made and implements ReservationDatabaseInterface
  * can be used to add and remove reservations
  */
