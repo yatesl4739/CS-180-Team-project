@@ -10,7 +10,7 @@ import java.util.ArrayList;
  *
  */
 
-public interface UserDataBaseInterface {
+public interface UserDatabaseInterface {
 
     /**
      * Sets list of Users
