@@ -95,7 +95,7 @@ public class Event {
      * @param numPeople
      * @param timeOfReservation
      * @param date
-     * @return
+     * @return boolean represents if the reservation was created properly
      */
     public boolean createReservation(int[] x, int[] y, String user, int numPeople, long timeOfReservation, long date) {
         //array of x values represents x values of seats reserved
@@ -126,6 +126,7 @@ public class Event {
         }
         reservationDB.addReservation(new Reservation(this, user, numPeople, timeOfReservation, date,
                 totalCostOfReservation, x, y));
+        return true;
     }
 
 
