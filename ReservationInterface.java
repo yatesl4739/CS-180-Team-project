@@ -9,69 +9,99 @@
 public interface ReservationInterface {
 
     /**
-     * gets user
-     * @return
+     * Get the user object for that certain reservation
+     * @return User object of user who made the reservation
      */
-    public String getUser();
+    public User getUser();
 
     /**
-     * @return the number of people for reservation
+     * Get the number of people included in the reservation
+     * @return int of # of people in the reservation
      */
     public int getNumPeople();
 
     /**
-     * @return gets the time of the reservation
+     * get the time of day of the reservation
+     * @return a long of time of day of reservation as minutes since 0:00
      */
     public long getTimeOfReservation();
 
     /**
+     * get the date of the year when the resrevation is occuring
      * @return the date of the reservation
      */
     public long getDate();
 
     /**
-     * @return gets the price of the reservation
+     * returns the total price of a reservation
+     *
+     * @return double of total price of a reservation
      */
     public double getPrice();
 
     /**
-     * @return gets seats that are already reserved
+     * the array of reserved seats
+     * @return a 2D array of integers where the first column is x values and the second column is y values
      */
     public int[][] getReservedSeats();
 
     /**
-     * replace user
-     * @param user
+     * the array of x values of positions of seats reserved
+     * @return array of integer x value positions of seats reserved
      */
-    public void setUser(String user);
+    public int[] getX();
 
     /**
-     * replace number of people
+     * the array of y values of positions of seats reserved
+     * @return array of integer y value positions of seats reserved
+     */
+    public int[] getY();
+
+    /**
+     * set the user object related to the resrvation
+     * @param user
+     */
+    public void setUser(User user);
+
+    /**
+     * set the number of people included in the reservation
      * @param numPeople
      */
     public void setNumPeople(int numPeople);
 
     /**
-     * replace time of reservation
+     * set the time of day of the reservation with the parameter being
+     * a long where its minutes since 0:00
      * @param timeOfReservation
      */
     public void setTimeOfReservation(long timeOfReservation);
 
     /**
-     * replace date of reservation
+     * set the date of the reservation with a long being days since epoch
      * @param date
      */
     public void setDate(long date);
 
     /**
-     * replace price of reservation
+     * set the price of the reservation
      * @param price
      */
     public void setPrice(double price);
 
     /**
-     * replace seats reserved
+     * set the array of reserved seats
+     * passing reserved seats array where
+     * 2D array of integers where the first column is x values and the second column is y values
      * @param reservedSeats
      */
     public void setReservedSeats(int[][] reservedSeats);
+
+    /**
+     * set the x and y values of the position of reserved seats
+     * @param x
+     * @param y
+     */
+    public void setXY(int[] x, int[] y);
+
+
 }

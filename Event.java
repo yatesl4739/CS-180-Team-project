@@ -115,7 +115,7 @@ public class Event implements EventInterface {
 
         if (x.length != y.length) {
             return false;
-            //Error beacuse there is a mismatch in data provided for seat position
+            //Error because there is a mismatch in data provided for seat position
         }
         for (int i = 0; i < x.length; i++) {
             if (seatingChart[x[i]][y[i]] == ' ') {
