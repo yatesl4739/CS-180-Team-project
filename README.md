@@ -20,6 +20,12 @@ The event object can take in a reservation request, update its local variables l
 
 ### Reservation 
 
+The Reservation object contains information to help keep track and hold data about a certain reservation created by a User. A reservation object holds data like the User, the number of people included in a reservation, the date of which the reservation was made, the price of which the reservation costs, a couple arrays that help keep track of what seats were reserved, and the event object of which the reservation is for.
+
 ### Venue
 
+The Venue object is more or less just the overall main class that holds everything together because this system is ment for a signel venue. The venue holds other objects such as event database.
+
 ### User
+
+The User object is a object that represnts a signle user that would be creating reservations for our service. A User contains things like a Username, a Password, and a reservation database object. The job of the user object is just to keep data on the user, remember the users reservations and data, and handle requests made by the user. 
