@@ -70,5 +70,5 @@ public interface EventInterface {
      * @param date
      * @return boolean represents if the reservation was created properly
      */
-    boolean createReservation(int[] x, int[] y, String user, int numPeople, long timeOfReservation, long date);
+    public boolean createReservation(int[] x, int[] y, User user, int numPeople, long timeOfReservation, long date);
 }
