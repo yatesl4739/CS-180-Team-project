@@ -12,20 +12,20 @@ That includes databases of Reservations, Events, and Users.
 Each database has IO support and saves data to the ```saveFiles``` directory.
 Each public function of every class is declared in a public interface.
 
-### Event
+### Event - Liam
 
 The Event object contains information that is related to a certain event like the event name, price of event, seating chart, time of day, and total revenue.
 The seating chart is stored as a 2D array where a 'o' represents an open seat, a 'x' represents a taken seat, and a '' represents a postiion with no available seat.
 The event object can take in a reservation request, update its local variables like seating chart and total revenue, and then create a reservation object and store that to the events reservation database. 
 
-### Reservation 
+### Reservation - Meraj
 
 The Reservation object contains information to help keep track and hold data about a certain reservation created by a User. A reservation object holds data like the User, the number of people included in a reservation, the date of which the reservation was made, the price of which the reservation costs, a couple arrays that help keep track of what seats were reserved, and the event object of which the reservation is for.
 
-### Venue
+### Venue - Krish / Leo
 
 The Venue object is more or less just the overall main class that holds everything together because this system is ment for a signel venue. The venue holds other objects such as event database.
 
-### User
+### User - Chelsea
 
 The User object is a object that represnts a signle user that would be creating reservations for our service. A User contains things like a Username, a Password, and a reservation database object. The job of the user object is just to keep data on the user, remember the users reservations and data, and handle requests made by the user. 
