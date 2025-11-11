@@ -86,6 +86,9 @@ public class EventDatabase implements Serializable, EventDatabaseInterface {
      * Update the save file with the current object state
      */
     private synchronized void updateSaveFile() {
+
+
+
         try {
             FileOutputStream fos = new FileOutputStream(SAVE_FILE);
             ObjectOutputStream oos = new ObjectOutputStream(fos);

@@ -1,4 +1,8 @@
-public class Event implements EventInterface {
+
+import java.io.Serializable;
+
+
+public class Event implements Serializable, EventInterface {
     private String eventName;
     private double priceOfEvent;
     private volatile char[][] seatingChart; //stores available seats and shape of seats
