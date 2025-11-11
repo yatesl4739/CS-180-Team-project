@@ -8,7 +8,7 @@ import java.io.*;
 public class EventDatabase implements EventDatabaseInterface{
 
     private volatile ArrayList<Event> eventList = new ArrayList<Event>();
-    private final File SAVE_FILE = new File("/saveFiles/eventDatabase.file");
+    private final File SAVE_FILE = new File("saveFiles/eventDatabase.file");
 
     //pass nothing
     public EventDatabase() {
@@ -101,7 +101,6 @@ public class EventDatabase implements EventDatabaseInterface{
 
     }
 
-    @org.jetbrains.annotations.Nullable
     private synchronized EventDatabase getObjectFromSaveFile() {
 
         try {
