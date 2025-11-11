@@ -5,7 +5,7 @@ import java.io.*;
  * database that manages all the events.
  * holds all event objects and can be used as an interface to easily acess and mofify events.
  */
-public class EventDatabase implements EventDatabaseInterface{
+public class EventDatabase implements Serializable, EventDatabaseInterface {
 
     private volatile ArrayList<Event> eventList = new ArrayList<Event>();
     private final File SAVE_FILE = new File("saveFiles/eventDatabase.file");
