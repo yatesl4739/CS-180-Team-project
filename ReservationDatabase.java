@@ -66,7 +66,7 @@ public class ReservationDatabase implements ReservationDatabaseInterface, Serial
     public synchronized ArrayList<Reservation> getUserReservations(String username) {
         ArrayList<Reservation> userReservations = new ArrayList<>();
         for (Reservation res : reservationList) {
-            if (res.getUser().equals(username)) {
+            if (res.getUser().getUsername().equals(username)) {
                 userReservations.add(res);
             }
         }
