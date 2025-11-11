@@ -1,8 +1,11 @@
-import org.junit.jupiter.api.*;
-
+//import org.junit.jupiter.api.*;       junit 5 syntax
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import java.io.File;
 import java.util.*;
-import static org.junit.jupiter.api.Assertions.*;
+//import static org.junit.jupiter.api.Assertions.*;       junit 5 syntax
+import static org.junit.Assert.*;
 
 public class VenueTest {
 
@@ -10,13 +13,15 @@ public class VenueTest {
 
     private Venue venue;
 
-    @BeforeAll
+    //@BeforeAll       junit 5 syntax
+    @BeforeClass
     public static void setup() {
         File f = new File("saveFiles/eventDatabase.file");
         if (f.exists()) f.delete();
     }
 
-    @BeforeEach
+    //@BeforeEach       junit 5 syntax
+    @Before
     public void setUp() {
         // Use the persistent EventDatabase inside Venue
         venue = new Venue("Test Venue");
