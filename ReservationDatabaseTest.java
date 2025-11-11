@@ -12,18 +12,25 @@ public class ReservationDatabaseTest {
         return new Event("TestEvent", 10.0, new char[][]{{'x'}}, 1L, 1L);
     }
 
-     private Reservation makeReservation(String username) {
+    private Reservation makeReservation(String username) {
         return new Reservation(makeEvent(),
                 makeUser(username),
                 1, 10L, 20L, 10.0,
                 new int[]{0}, new int[]{0});
      }
 
+    /**
+     * Tests that the default constructor initializes an empty reservation list
+     */
+     @Test
      public void testDefaultConstructor() {
         ReservationDatabase db = new ReservationDatabase();
         assertEquals("Reservation list should start empty", 0, db.getReservations().size());
      }
 
+    /**
+     * Tests constructor with a list of reservations
+     */
     @Test
     public void testConstructor() {
         ArrayList<Reservation> list = new ArrayList<>();
@@ -36,6 +43,9 @@ public class ReservationDatabaseTest {
         assertEquals("bob", db.getReservations().get(0).getUser().getUsername());
     }
 
+    /**
+     * Tests getReservations and setReservations
+     */
      @Test
      public void testGetterSetter() {
          ReservationDatabase db = new ReservationDatabase();
@@ -49,6 +59,10 @@ public class ReservationDatabaseTest {
                  1, db.getReservations().size());
          assertEquals("mike", db.getReservations().get(0).getUser().getUsername());
      }
+
+    /**
+     * Tests addReservation method, verifies reservation is added
+     */
      @Test
      public void testAddReservation() {
          ReservationDatabase db = new ReservationDatabase();
@@ -60,6 +74,9 @@ public class ReservationDatabaseTest {
          assertEquals("chris", db.getReservations().get(0).getUser().getUsername());
      }
 
+    /**
+     * Tests removeReservation method, ensures reservation is removed
+     */
      @Test
      public void testRemoveReservation() {
          ReservationDatabase db = new ReservationDatabase();
@@ -75,6 +92,10 @@ public class ReservationDatabaseTest {
 
      }
 
+    /**
+     * Tests getUserReservations method
+     * Ensures only reservations for a specified username are returned
+     */
      @Test
      public void testGetUserReservations() {
          ReservationDatabase db = new ReservationDatabase();

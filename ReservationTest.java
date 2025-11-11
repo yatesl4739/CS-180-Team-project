@@ -40,6 +40,11 @@ public class ReservationTest {
         assertEquals("getY incorrect", y, r.getY());
     }
 
+
+    /**
+     * tests all the Setter methods in Reservation
+     * Verifies that setX and setY are correct
+     */
     @Test
     public void testSetters() {
         User u1 = new User("bob", "pw");
@@ -79,6 +84,11 @@ public class ReservationTest {
         assertArrayEquals("setY incorrect", newY2, r1.getY());
     }
 
+    /**
+     * tests Reservation.toString()
+     * Ensures that it includes username and price in the output
+     */
+
     @Test
     public void testToString() {
         User u = new User("bob", "pw");
@@ -93,7 +103,7 @@ public class ReservationTest {
         String result = r.toString();
 
         assertTrue("toString should contain username",
-                result.contains("bob"));
+                result.contains(u.toString()));
         assertTrue("toString should contain price",
                 result.contains("20.0"));
     }
