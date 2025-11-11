@@ -14,21 +14,21 @@ public interface UserInterface {
     /**
      * Sets username of user
      *
-     * @param username
+     * @param username of User
      */
     public void setUsername(String username);
 
     /**
      * Sets password of user
      *
-     * @param password
+     * @param password of User
      */
     public void setPassword(String password);
 
     /**
      * Sets list of user's reservations
      *
-     * @param reservationDb
+     * @param reservationDb list of user's reservation
      */
     public void setReservationDb(ReservationDatabase reservationDb);
 
@@ -47,6 +47,13 @@ public interface UserInterface {
     public String getPassword();
 
     /**
+     * Returns total cost of reservations
+     *
+     * @return cost
+     */
+    public double getCost();
+
+    /**
      * Returns list of user's reservations
      *
      * @return reservations
@@ -56,14 +63,14 @@ public interface UserInterface {
     /**
      * Adds a reservation to the list
      *
-     * @param Reservation object
+     * @param r reservation object
      */
     public void addReservation(Reservation r);
 
     /**
      * Removes a reservation based on index in the list
      *
-     * @param index
+     * @param index of reservation
      */
     public void removeReservation(int index);
 

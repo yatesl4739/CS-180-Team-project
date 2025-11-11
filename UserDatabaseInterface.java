@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.io.*;
 
 /**
  * UserDatabaseInterface
@@ -15,7 +16,7 @@ public interface UserDatabaseInterface {
     /**
      * Sets list of Users
      *
-     * @param given list of Users
+     * @param users list of Users
      */
     public void setUsers(ArrayList<User> users);
 
@@ -27,16 +28,24 @@ public interface UserDatabaseInterface {
     public ArrayList<User> getUserDb();
 
     /**
+     * Returns User at given index
+     *
+     * @param index of User
+     * @return user at index
+     */
+    public User get(int index);
+
+    /**
      * Adds a user to the list
      *
-     * @param given User object
+     * @param u User object
      */
     public void addUser(User u);
 
     /**
      * Removes a user from the list by object, returns true if successful
      *
-     * @param given User object
+     * @param u User object
      * @return boolean representing success
      */
     public boolean removeUser(User u);
@@ -48,5 +57,10 @@ public interface UserDatabaseInterface {
      * @return boolean representing success
      */
     public boolean removeUser(int index);
+
+    /**
+     * Updates the save file with the list of Users
+     */
+    public void updateSaveFile();
 
 }

@@ -18,11 +18,11 @@ public class User implements UserInterface {
     private double cost; // Cost of all reservations
 
     /**
-     * Construstor given a username and password,
+     * Constructor given a username and password,
      * creates empty list of reservations and sets cost to 0 as a new user
      * 
-     * @param username
-     * @param password
+     * @param username of User
+     * @param password of User
      */
     public User(String username, String password) {
         this.username = username;
@@ -34,27 +34,27 @@ public class User implements UserInterface {
     /**
      * Sets username of user
      *
-     * @param username
+     * @param username of User
      */
-    public void setUsername(String username){
+    public synchronized void setUsername(String username){
         this.username = username;
     }
 
     /**
      * Sets password of user
      *
-     * @param password
+     * @param password of User
      */
-    public void setPassword(String password){
+    public synchronized void setPassword(String password){
         this.password = password;
     }
 
     /**
      * Sets list of user's reservations
      *
-     * @param reservationDb
+     * @param reservationDb list of user's reservations
      */
-    public void setReservationDb(ReservationDatabase reservationDb) {
+    public synchronized void setReservationDb(ReservationDatabase reservationDb) {
         this.reservationDb = reservationDb;
         for (Reservation r : reservationDb.getReservations()) {
             cost += r.getPrice();
@@ -87,13 +87,20 @@ public class User implements UserInterface {
     public ReservationDatabase getReservationDb() {
         return reservationDb;
     }
-
+    
+    /**
+     * Returns total cost of reservations
+     *
+     * @return cost
+     */
+    public double getCost() { return cost; }
+    
     /**
      * Adds a reservation to the list
      *
-     * @param Reservation object
+     * @param r object
      */
-    public void addReservation(Reservation r) {
+    public synchronized void addReservation(Reservation r) {
         reservationDb.addReservation(r);
         cost += r.getPrice();
     }
@@ -101,9 +108,9 @@ public class User implements UserInterface {
     /**
      * Removes a reservation based on index in the list
      *
-     * @param index
+     * @param index of reservation to remove
      */
-    public void removeReservation(int index) {
+    public synchronized void removeReservation(int index) {
         cost -= reservationDb.getReservations().get(index).getPrice();
         reservationDb.removeReservation(index);
     }
