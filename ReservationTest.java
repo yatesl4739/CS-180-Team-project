@@ -1,6 +1,17 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+/**
+ * ReservationTest
+ *
+ * @author Leo Zhang
+ *
+ * @version 11/10/25
+ *
+ * verifies that all constructors, getter, and setter methods
+ * and the toString method in the Reservation class behave correctly
+ */
+
 public class ReservationTest {
 
     /**

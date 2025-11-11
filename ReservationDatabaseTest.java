@@ -2,6 +2,17 @@ import org.junit.Test;
 import java.util.ArrayList;
 import static org.junit.Assert.*;
 
+/**
+ * ReservationDatabaseTest
+ *
+ * @author Leo Zhang
+ *
+ * @version 11/10/25
+ *
+ * verifies that all constructors and methods in the
+ * ReservationDatabase class functions correctly
+ */
+
 public class ReservationDatabaseTest {
 
     public User makeUser(String name) {
