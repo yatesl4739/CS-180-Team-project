@@ -46,7 +46,7 @@ public class ReservationTest {
         Event e1 = new Event("Show", 5.0, new char[][]{{'o'}}, 50L, 60L);
         int[] x1 = {0};
         int[] y1 = {0};
-        Reservation r = new Reservation(e1, u1, 1, 50L, 60L, 20.0, x1, y1);
+        Reservation r1 = new Reservation(e1, u1, 1, 50L, 60L, 20.0, x1, y1);
 
         // change values
         User u2 = new User("charlie", "pass");
@@ -54,29 +54,29 @@ public class ReservationTest {
         int[] newX = {1};
         int[] newY = {2};
 
-        r.setUser(u2);
-        r.setEvent(e2);
-        r.setNumPeople(2);
-        r.setTimeOfReservation(100L);
-        r.setDate(200L);
-        r.setPrice(50.0);
-        r.setXY(newX, newY);
+        r1.setUser(u2);
+        r1.setEvent(e2);
+        r1.setNumPeople(2);
+        r1.setTimeOfReservation(100L);
+        r1.setDate(200L);
+        r1.setPrice(50.0);
+        r1.setXY(newX, newY);
 
         // assertions
-        assertEquals("User setter failed", "charlie", r.getUser().getUsername());
-        assertEquals("Event setter failed", e2, r.getEvent());
-        assertEquals("Numpeople setter failed", 2, r.getNumPeople());
-        assertEquals("Time setter failed", 100L, r.getTimeOfReservation());
-        assertEquals("Date setter failed", 200L, r.getDate());
-        assertEquals("Price setter failed", 50.0, r.getPrice(), 0.001);
+        assertEquals("User setter failed", "charlie", r1.getUser().getUsername());
+        assertEquals("Event setter failed", e2, r1.getEvent());
+        assertEquals("NumPeople setter failed", 2, r1.getNumPeople());
+        assertEquals("Time setter failed", 100L, r1.getTimeOfReservation());
+        assertEquals("Date setter failed", 200L, r1.getDate());
+        assertEquals("Price setter failed", 50.0, r1.getPrice(), 0.001);
 
-        assertEquals(1, r.getReservedSeats()[0][0]);
-        assertEquals(2, r.getReservedSeats()[1][0]);
+        assertEquals(1, r1.getReservedSeats()[0][0]);
+        assertEquals(2, r1.getReservedSeats()[1][0]);
 
         int[] newY2 = {5};
-        r.setY(newY2);
+        r1.setY(newY2);
 
-        assertArrayEquals("setY incorrect", newY2, r.getY());
+        assertArrayEquals("setY incorrect", newY2, r1.getY());
     }
 
     @Test
