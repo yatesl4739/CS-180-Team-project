@@ -47,26 +47,50 @@ public class Venue implements VenueInterface{
 
     //getters and setters
 
+    /**
+     * get back the hours of operation of the venue
+     * @return String which contains hours of operation
+     */
     public String getHoursOfOperation(){
         return this.hoursOfOperation;
     }
 
+    /**
+     * set the hours of operation of the venue
+     * @param hoursOfOperation String of hours of operation of venue
+     */
     public void setHoursOfOperation(String hoursOfOperation){
         this.hoursOfOperation = hoursOfOperation;
     }
 
+    /**
+     * get back the name of the venue
+     * @return String which represents the venue name
+     */
     public String getVenueName() {
         return venueName;
     }
 
+    /**
+     * set the venue name
+     * @param venueName
+     */
     public void setVenueName(String venueName) {
         this.venueName = venueName;
     }
 
+    /**
+     * get back the event database of events for a venue
+     * @return EventDatabse object that holds the events for a venue
+     */
     public EventDatabase getEventDatabase() {
         return eventDatabase;
     }
 
+    /**
+     * set the event database, which holds events for a venue.
+     * @param eventDatabase
+     */
     public void setEventDatabase(EventDatabase eventDatabase) {
         this.eventDatabase = eventDatabase;
     }
