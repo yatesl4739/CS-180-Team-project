@@ -105,6 +105,22 @@ public class Venue implements VenueInterface{
 
     }
 
+
+    /**
+     * Returns a list of all event names for events in the database.
+     *
+     * @return ArrayList of event names.
+     */
+    public ArrayList<String> getEventNames() {
+        ArrayList<String> names = new ArrayList<>();
+        synchronized (gatekeeper) {
+            for (Event e : eventDatabase.getEvents()) {
+                names.add(e.getEventName());
+            }
+        }
+        return names;
+    }
+
     /**
      * Adds a new event to the venue’s EventDatabase.
      *
