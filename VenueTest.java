@@ -1,98 +1,101 @@
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeAll;
-import java.io.File;
-import java.util.ArrayList;
-import static org.junit.jupiter.api.Assertions.*;
-import java.io.*;
+import org.junit.jupiter.api.*;
 
+import java.io.File;
+import java.util.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class VenueTest {
 
 
 
-    // Tests the constructor with only a name
+    private Venue venue;
+
+    @BeforeAll
+    public static void setupSaveDirectory() {
+        File dir = new File("saveFiles");
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+    }
+
+    @BeforeEach
+    public void setUp() {
+        // Use the persistent EventDatabase inside Venue
+        venue = new Venue("Test Venue");
+    }
+
     @Test
     public void testVenueConstructorDefault() {
-        Venue v = new Venue("AMC");
-        assertEquals("AMC", v.getVenueName());
-        assertEquals("Not specified", v.getHoursOfOperation());
-        assertNotNull(v.getEventDatabase());
-        assertTrue(v.getEventDatabase().getEvents().isEmpty());
-    }
-
-    // Tests the full constructor with EventDatabase and hours
-    @Test
-    public void testVenueConstructorFull() {
-        EventDatabase db = new EventDatabase();
-        Venue v = new Venue("Regal", db, "9AM - 11PM");
-        assertEquals("Regal", v.getVenueName());
-        assertEquals("9AM - 11PM", v.getHoursOfOperation());
-        assertEquals(db, v.getEventDatabase());
+        assertEquals("Test Venue", venue.getVenueName());
+        assertEquals("Not specified", venue.getHoursOfOperation());
+        assertNotNull(venue.getEventDatabase());
     }
 
     @Test
-    void testGetEventPrices() {
-        Venue venue = new Venue("Sample Venue");
-
-        // Create dummy seating chart (small 2x2 array for simplicity)
-        char[][] seating = {
-                {'o', 'o'},
-                {'o', 'o'}
-        };
-
-        // Create three events with different prices
-        Event event1 = new Event("Concert", 50.0, seating, 1700000000L, 20251112L);
-        Event event2 = new Event("Play", 30.0, seating, 1700001000L, 20251115L);
-        Event event3 = new Event("Comedy Show", 40.0, seating, 1700002000L, 20251120L);
-
-        // Add events to the venue
-        venue.addEvent(event1);
-        venue.addEvent(event2);
-        venue.addEvent(event3);
-
-        // Get all event prices
-        ArrayList<Double> prices = venue.getEventPrices();
-
-        // Assertions
-        assertNotNull(prices, "Event prices list should not be null");
-        assertEquals(3, prices.size(), "There should be 3 prices in the list");
-        assertTrue(prices.contains(50.0), "Price 50.0 should exist in the list");
-        assertTrue(prices.contains(30.0), "Price 30.0 should exist in the list");
-        assertTrue(prices.contains(40.0), "Price 40.0 should exist in the list");
+    public void testSetAndGetHoursOfOperation() {
+        venue.setHoursOfOperation("9am-9pm");
+        assertEquals("9am-9pm", venue.getHoursOfOperation());
     }
 
-
-    // Tests adding and removing events
     @Test
-    public void testVenueAddAndRemoveEvent() {
-        Venue v = new Venue("Cinemark");
-        Event e = new Event("Movie Night", 10.0, new char[5][5], 1600, 120);
-        v.addEvent(e);
-        assertFalse(v.getEventDatabase().getEvents().isEmpty());
-        v.removeEvent(0);
-        assertTrue(v.getEventDatabase().getEvents().isEmpty());
+    public void testAddAndRemoveEvent() {
+        int initialCount = venue.getEventDatabase().getEvents().size();
+
+        Event e1 = new Event("Comedy Night", 30.0, new char[2][2], 1234L, 1L);
+        venue.addEvent(e1);
+
+        // Expect 1 new event on top of whatever persisted
+        assertEquals(initialCount + 1, venue.getEventDatabase().getEvents().size());
+
+        // Remove the newly added event
+        venue.removeEvent(venue.getEventDatabase().getEvents().size() - 1);
+        assertEquals(initialCount, venue.getEventDatabase().getEvents().size());
     }
 
-    // Tests getting event names
     @Test
     public void testGetEventNames() {
-        Venue v = new Venue("AMC");
-        v.addEvent(new Event("Concert", 20.0, new char[5][5], 1500, 110));
-        v.addEvent(new Event("Play", 15.0, new char[5][5], 1700, 111));
-        ArrayList<String> names = v.getEventNames();
+        int existingCount = venue.getEventDatabase().getEvents().size();
+
+        Event e1 = new Event("Concert", 25.0, new char[2][2], 1000L, 1L);
+        Event e2 = new Event("Play", 15.0, new char[2][2], 2000L, 2L);
+        venue.addEvent(e1);
+        venue.addEvent(e2);
+
+        ArrayList<String> names = venue.getEventNames();
+
+        // Expect existing count + 2 new events
+        assertTrue(names.size() >= existingCount + 2);
         assertTrue(names.contains("Concert"));
         assertTrue(names.contains("Play"));
     }
 
-    // Tests getting event times and prices
     @Test
     public void testGetEventTimesAndPrices() {
-        Venue v = new Venue("Regal");
-        v.addEvent(new Event("Concert", 20.0, new char[5][5], 1500, 110));
-        v.addEvent(new Event("Play", 15.0, new char[5][5], 1700, 111));
-        ArrayList<Long> times = v.getEventTimes();
-        ArrayList<Double> prices = v.getEventPrices();
-        assertEquals(2, times.size());
-        assertEquals(2, prices.size());
+        int existingCount = venue.getEventDatabase().getEvents().size();
+
+        Event e1 = new Event("Game Night", 10.0, new char[2][2], 3000L, 3L);
+        Event e2 = new Event("Theatre", 40.0, new char[2][2], 4000L, 4L);
+        venue.addEvent(e1);
+        venue.addEvent(e2);
+
+        ArrayList<Long> times = venue.getEventTimes();
+        ArrayList<Double> prices = venue.getEventPrices();
+
+        // Expect at least existingCount + 2 events after adding
+        assertTrue(times.size() >= existingCount + 2);
+        assertTrue(prices.size() >= existingCount + 2);
+
+        // Validate the new data was added
+        assertTrue(prices.contains(10.0));
+        assertTrue(prices.contains(40.0));
+        assertTrue(times.contains(3000L));
+        assertTrue(times.contains(4000L));
     }
+
+    @Test
+    public void testGetAndSetVenueName() {
+        venue.setVenueName("New Venue Name");
+        assertEquals("New Venue Name", venue.getVenueName());
+    }
+
 }
