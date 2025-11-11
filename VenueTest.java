@@ -11,11 +11,9 @@ public class VenueTest {
     private Venue venue;
 
     @BeforeAll
-    public static void setupSaveDirectory() {
-        File dir = new File("saveFiles");
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
+    public static void setup() {
+        File f = new File("saveFiles/eventDatabase.file");
+        if (f.exists()) f.delete();
     }
 
     @BeforeEach
