@@ -1,4 +1,8 @@
 import java.util.ArrayList;
+
+/**
+ * interface to help public implementation of EventDatabase class
+ */
 public interface EventDatabaseInterface {
 
 

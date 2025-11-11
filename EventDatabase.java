@@ -4,13 +4,22 @@ import java.io.*;
 /**
  * database that manages all the events.
  * holds all event objects and can be used as an interface to easily acess and mofify events.
+ *
+ * the class uses an array list and object input/output io to manage and store all events for a venue
+ *
+ * @author liam yates
+ *
+ * @version nov 10th 2025
  */
 public class EventDatabase implements Serializable, EventDatabaseInterface {
 
     private volatile ArrayList<Event> eventList = new ArrayList<Event>();
     private final File SAVE_FILE = new File("saveFiles/eventDatabase.file");
 
-    //pass nothing
+    /**
+     * constructor for EventDatabase with no parameters
+     * this way the database will either read from the file or init with an empty array list
+     */
     public EventDatabase() {
         if (SAVE_FILE.canRead() &&
                 SAVE_FILE.exists() &&
@@ -22,13 +31,22 @@ public class EventDatabase implements Serializable, EventDatabaseInterface {
         }
 
     }
-    //pass a single event
+
+    /**
+     * constructor for EventDatabase
+     * where the eventList will be initialized with a single event.
+     * @param singleEvent is the only event that the event database will be initialized with.
+     */
     public EventDatabase(Event singleEvent) {
         eventList.add(singleEvent);
     }
     //pass list of events
 
-
+    /**
+     * constructor for event database
+     * where the events list will be initialized with an entire given event list
+     * @param eventList is the arrayList that will be assigned to the DB event list
+     */
     public EventDatabase(ArrayList<Event> eventList) {
         this.eventList = eventList;
     }
@@ -38,7 +56,7 @@ public class EventDatabase implements Serializable, EventDatabaseInterface {
 
     /**
      * get back the entire array list of saved events
-     * @return ArrayList<Events> of all the events in the event databse
+     * @return ArrayList<Events> of all the events in the event database
      */
     public synchronized ArrayList<Event> getEvents() {
         return eventList;
@@ -104,6 +122,11 @@ public class EventDatabase implements Serializable, EventDatabaseInterface {
 
     }
 
+    /**
+     * get the event database from the save file to read info like event list
+     *
+     * @return this EventDatabase
+     */
     private synchronized EventDatabase getObjectFromSaveFile() {
 
         try {

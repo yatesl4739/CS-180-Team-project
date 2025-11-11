@@ -1,3 +1,6 @@
+/**
+ * interface to help public implementation of Event class
+ */
 public interface EventInterface {
 
     //setters
