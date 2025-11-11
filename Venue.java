@@ -32,6 +32,15 @@ public class Venue implements VenueInterface{
     }
 
     /**
+     * constructor for Venue that has no name, to be changed later
+     */
+    public Venue() {
+        this.venueName = "New Venue";
+        this.hoursOfOperation = "Not specified";
+        this.eventDatabase = new EventDatabase();
+    }
+
+    /**
      * Constructor for Venue that initializes name, database, and hours of operation.
      *
      * @param name             The name of the venue.
