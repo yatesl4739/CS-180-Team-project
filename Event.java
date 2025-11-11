@@ -1,8 +1,14 @@
-
 import java.io.Serializable;
 
-
-public class Event implements Serializable, EventInterface {
+/**
+ * Class that is used to manage and hold data for a certain event
+ *
+ * @author liam yates
+ *
+ * @version nov 10 2025
+ *
+ */
+public class Event implements EventInterface, Serializable {
     private String eventName;
     private double priceOfEvent;
     private volatile char[][] seatingChart; //stores available seats and shape of seats
@@ -99,6 +105,9 @@ public class Event implements Serializable, EventInterface {
     public long getTotalRevenue() {
         return totalRevenue;
     }
+    public ReservationDatabase getReservationDB() {
+        return reservationDB;
+    }
 
     /**
      * uses input from UI to create a reservation for this event.
@@ -133,7 +142,8 @@ public class Event implements Serializable, EventInterface {
                 return false;
                 //seat is taken
             } else if (seatingChart[x[i]][y[i]] == 'o') {
-                System.out.println("Seat # " + (i + 1) + " has been resved");
+                System.out.println("Seat # " + (i + 1) + " has been reserved");
+                seatingChart[x[i]][y[i]] = 'x';
                 //seat is reserved and now marked as taken
             }
 
