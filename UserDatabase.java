@@ -20,7 +20,7 @@ public class UserDatabase implements UserDatabaseInterface {
      * Constructor given no parameters, creates empty list
      */
     public UserDatabase() {
-        ArrayList<User> userDb = new ArrayList<>();
+        userDb = new ArrayList<>();
         updateSaveFile();
     }
 
@@ -40,7 +40,7 @@ public class UserDatabase implements UserDatabaseInterface {
      * @param u given User
      */
     public UserDatabase(User u) {
-        ArrayList<User> userDb = new ArrayList<>();
+        userDb = new ArrayList<>();
         userDb.add(u);
         updateSaveFile();
     }
@@ -116,11 +116,13 @@ public class UserDatabase implements UserDatabaseInterface {
      * Updates the save file with the list of Users
      */
     public synchronized void updateSaveFile() {
-        try (FileOutputStream fos = new FileOutputStream(SAVE_FILE);
-             ObjectOutputStream oos = new ObjectOutputStream(fos)){
-            oos.writeObject(this);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (SAVE_FILE.exists()) {
+            try (FileOutputStream fos = new FileOutputStream(SAVE_FILE);
+                 ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+                oos.writeObject(this);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
