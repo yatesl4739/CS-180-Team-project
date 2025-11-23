@@ -93,7 +93,7 @@ public class EventDatabase implements Serializable, EventDatabaseInterface {
             updateSaveFile();
         }
         catch(IndexOutOfBoundsException e) {
-            System.out.println("Error: event number intputted is not a valid index");
+            System.out.println("Error: event number inputted is not a valid index");
             e.printStackTrace();
             return;
         }
