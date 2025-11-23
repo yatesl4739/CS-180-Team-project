@@ -244,20 +244,54 @@ public class reservationServer {
                         }
                     }
 
+
                     //provideString of all reservations
+                    String returnString = "";
+                    for (int i = 0; i < userReservations.size(); i++) {
+                        //$$ marks the space between reservation strings
+                        if (i < userReservations.size() - 1) {
+                            returnString += userReservations.get(i).toString() + "$$";
+                        } else {
+                            //no $$ on this one beacuse its the last entry
+                            returnString += userReservations.get(i).toString();
+                        }
+
+                    }
+
+                    pr.write(returnString);
+                } else if (nextInput.equals("EVENTS")) {
+                    //view events
+
+                    //single hashtag represents the start of the string
+                    String returnEvents = "#";
+                    ArrayList<Event> eventDB = venue1.getEventDatabase().getEvents();
+                    for (int i = 0; i < eventDB.size(); i++) {
+                        if (i == eventDB.size() - 1) {
+                            //$$ represents seperator between event names
+                            //%% is seperator between day and event name,
+                            // and @@ is seperator between day and time
+                            returnEvents += eventDB.get(i).getEventName() + "%%";
+                            returnEvents += eventDB.get(i).getDay() + "@@";
+                            returnEvents += eventDB.get(i).getTimeOfDay() + "$$";
+                        } else {
+                            returnEvents += eventDB.get(i).getEventName() + "%%";
+                            returnEvents += eventDB.get(i).getDay() + "@@";
+                            returnEvents += eventDB.get(i).getTimeOfDay();
+                        }
+                    }
+                    //another hashtag added at the end of the string
+                    returnEvents += "#";
+
+                    pr.write(returnEvents);
                 }
+                //TODO: add password reset ability
 
 
-                pr.println();
 
 
-                while (nextInput != null) {
-
-                    System.out.println(nextInput);
-                    nextInput = br.readLine();
+                //TODO: make everything above a loop so a user can stay in the thingy
 
 
-                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
