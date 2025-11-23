@@ -8,7 +8,6 @@ import java.io.*;
  *
  * @author Chelsea Zhao, lab section L12
  * @version November 10, 2025
- *
  */
 
 public class UserDatabase implements UserDatabaseInterface {
@@ -124,6 +123,70 @@ public class UserDatabase implements UserDatabaseInterface {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * login function to handle a login request from the server
+     */
+    public User login(String username, String password) {
+        //check if username exists
+        for (int i = 0; i < userDb.size(); i++) {
+            if (username.equals(userDb.get(i).getUsername())) {
+
+                //correct user has been found
+                User correctUser = userDb.get(i);
+
+                if (password.equals(correctUser.getPassword())) {
+                    //SUCSESS LOGIN
+                    return correctUser;
+                } else {
+                    //PASSWORD INCORRECT
+                    return new User("PASSWORD INCORRECT", null);
+                }
+            }
+
+        }
+        return new User("USER NOT FOUND", null);
+    }
+
+    /**
+     * handle a user signing up
+     */
+    public User signUp(String username, String password) {
+        //check if username is against restricted usernames
+        if (username.equals("PASSWORD INCORRECT") ||
+                username.equals("USER NOT FOUND") ||
+                username.equals("INVALID USERNAME") ||
+                username.equals("USERNAME TAKEN") ||
+                username.equals("PASSWORD INVALID")) {
+
+            return new User("INVALID USERNAME", null);
+        }
+
+        //check to see if username is available
+        for (int i = 0; i < userDb.size(); i++) {
+            if (username.equals(userDb.get(i).getUsername())) {
+                //username taken
+                return new User("USERNAME TAKEN", null);
+            }
+
+        }
+        //else: create a new user
+
+        //check if there is a password provided
+
+        if (!(password.length() > 0)) {
+            return new User("PASSWORD INVALID", null);
+        }
+
+
+
+        User newUser = new User(username, password);
+        userDb.add(newUser);
+        return newUser;
+
+
+
     }
 
 }
