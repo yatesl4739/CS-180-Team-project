@@ -39,8 +39,15 @@ public class reservationClient implements Runnable {
             System.out.println("Connected to server. " + venueLine);
 
             // initial command
-            System.out.println("Enter command: LOGIN / SIGNUP / EVENTS");
+            System.out.println("Enter command: LOGIN / SIGNUP");
             String cmd = sc.nextLine().toUpperCase().trim();
+
+            while (!(cmd.equals("LOGIN") || cmd.equals("SIGNUP"))) {
+                System.out.println("Invalid input");
+                System.out.println("Enter command: LOGIN / SIGNUP");
+                cmd = sc.nextLine().toUpperCase().trim();
+            }
+
             pr.println(cmd);
 
             // LOGIN
@@ -79,18 +86,36 @@ public class reservationClient implements Runnable {
                 }
             }
 
+            /* shouldn't be an option bc otherwise user will not sign in
+
             // EVENTS
             else if (cmd.equals("EVENTS")) {
                 String events = br.readLine();
                 System.out.println("Events: " + events);
             }
 
-            // second command
-            System.out.println("Next command: NEW / VIEW / EVENTS");
-            String next = sc.nextLine().toUpperCase().trim();
-            pr.println(next);
+             */
 
-            // NEW reservation - Krish take over here!
+            boolean loggedIn = true;
+
+            while (loggedIn) {
+
+                // I don't think this is needed actually?
+                pr.println("SECOND_COMMAND");
+
+                // second command
+                System.out.println("Next command: NEW / VIEW / EVENTS / LOGOUT");
+                String next = sc.nextLine().toUpperCase().trim();
+                pr.println(next);
+
+                // NEW reservation - Krish take over here!
+
+                // Logout
+                if (next.equals("LOGOUT")) {
+                    loggedIn = false;
+                }
+
+            }
 
             // stop here!
         } catch (IOException e) {
