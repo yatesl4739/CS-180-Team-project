@@ -11,18 +11,18 @@ import java.util.Scanner;
  *
  */
 
-public class reservationClient implements Runnable {
+public class ReservationClient implements Runnable, ReservationClientInterface {
 
     private String host;
     private int port;
 
-    public reservationClient(String host, int port) {
+    public ReservationClient(String host, int port) {
         this.host = host;
         this.port = port;
     }
 
     public static void main(String[] args) {
-        reservationClient client = new reservationClient("localhost", 4242);
+        ReservationClient client = new ReservationClient("localhost", 4242);
         client.run();
     }
 
@@ -98,7 +98,7 @@ public class reservationClient implements Runnable {
                 if (next.equals("NEW")) {
 
                     String rawEvents = br.readLine();
-                    System.out.println("/nAvailable Events:");
+                    System.out.println("\nAvailable Events:");
 
                     if (rawEvents.startsWith("#") && rawEvents.endsWith("#")) {
                         rawEvents = rawEvents.substring(1, rawEvents.length() - 1);
