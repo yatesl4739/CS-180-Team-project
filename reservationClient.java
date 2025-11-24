@@ -40,7 +40,6 @@ public class reservationClient implements Runnable {
 
             boolean running = true;
 
-            // *** FIXED: loop now uses 'running' instead of true ***
             while (running) {
 
                 // initial command
@@ -188,7 +187,6 @@ public class reservationClient implements Runnable {
                     }
                 }
 
-                // *** FIXED: exit now checks 'next', not 'cmd' AND sets running = false ***
                 if (next.equals("EXIT")) {
                     running = false;
                     break;
