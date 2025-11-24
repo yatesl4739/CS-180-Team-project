@@ -5,44 +5,45 @@ import java.util.ArrayList;
 import java.util.concurrent.*;
 
 
-public class reservationServer {
+public class reservationServer implements Runnable, ReservationServerInterface {
     //venue has an events database
     //events database has a reservation database
     private static volatile Venue venue1 = new Venue();
     private static volatile UserDatabase usrDB = new UserDatabase();
 
+    private ServerSocket serverSocket;
+    private boolean running = false;
+    private ExecutorService pool = Executors.newCachedThreadPool();
 
-    public static void main(String[] args) {
+    public reservationServer(int port) throws IOException {
+        serverSocket = new ServerSocket(port);
+    }
 
+    public void start() {
+        running = true;
+        new Thread(this).start();
+    }
+
+    public void stop() {
+        running = false;
         try {
-            System.out.println("Creating server");
-            ExecutorService pool = Executors.newCachedThreadPool();
-            ServerSocket serverSocket = new ServerSocket(4242);
-            System.out.println("Server has been created!");
+            serverSocket.close();
+        } catch (IOException ignored) {}
+        pool.shutdownNow();
+    }
 
-            while (true) {
-                //open the server on port 5000
+    public void run() {
+        System.out.println("Server running...");
 
-
-                System.out.println("Waiting for client to connect...");
-
-                //forever look for connections:
-                while (true) {
-                    Socket connectedClient = serverSocket.accept();
-
-
-                    //create a instance of the client handler and add it to the thread pool
-                    pool.submit(new clientHandler(connectedClient));
-
-
-                }
-
-
+        while (running) {
+            try {
+                Socket clientSocket = serverSocket.accept();
+                pool.submit(new clientHandler(clientSocket));
+            } catch (IOException e) {
+                if (running == false) break;
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-
     }
 
 
