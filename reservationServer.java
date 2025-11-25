@@ -361,8 +361,8 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                             ArrayList<Reservation> resDBTemp = venue1.getEventDatabase().
                                     getEvents().get(i).getReservationDB().getReservations();
                             for (int j = 0; j < resDBTemp.size(); j++) {
-                                if (resDBTemp.get(i).getUser().getUsername().equals(clientUser.getUsername())) {
-                                    userReservations.add(resDBTemp.get(i));
+                                if (resDBTemp.get(j).getUser().getUsername().equals(clientUser.getUsername())) {
+                                    userReservations.add(resDBTemp.get(j));
                                 }
                             }
                         }
