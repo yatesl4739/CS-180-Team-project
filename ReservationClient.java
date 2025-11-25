@@ -11,7 +11,7 @@ import java.util.Scanner;
  *
  */
 
-public class ReservationClient implements Runnable, ReservationClientInterface {
+public class ReservationClient implements ReservationClientInterface {
 
     private String host;
     private int port;
@@ -23,11 +23,6 @@ public class ReservationClient implements Runnable, ReservationClientInterface {
 
     public static void main(String[] args) {
         ReservationClient client = new ReservationClient("localhost", 4242);
-        client.run();
-    }
-
-    @Override
-    public void run() {
         try (Socket socket = new Socket(host, port)) {
 
             BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -37,11 +32,6 @@ public class ReservationClient implements Runnable, ReservationClientInterface {
             // read the venue name from server
             String venueLine = br.readLine();
             System.out.println("Connected to server. " + venueLine);
-
-            boolean running = true;
-
-            while (running) {
-
                 // initial command
                 System.out.println("Enter command: LOGIN / SIGNUP / EVENTS");
                 String cmd = sc.nextLine().toUpperCase().trim();
@@ -188,15 +178,14 @@ public class ReservationClient implements Runnable, ReservationClientInterface {
                 }
 
                 if (next.equals("EXIT")) {
-                    running = false;
                     break;
                 }
-            }
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-}
 
+
+}
