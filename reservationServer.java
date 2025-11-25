@@ -4,19 +4,32 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.concurrent.*;
 
+/**
+ * reservationServer
+ *
+ * This program receives input from ReservationClient
+ * and makes changes to the venue. A user is able
+ * to login, create an account, logout, and make
+ * or view reservations.
+ *
+ * @author Liam Yates, Leo Zhang, Chelsea Zhao, lab sec L12
+ *
+ * @version November 24, 2025
+ *
+ */
 
 public class reservationServer implements Runnable, ReservationServerInterface {
     //venue has an events database
     //events database has a reservation database
-    private static volatile Venue venue1 = new Venue();
-    private static volatile UserDatabase usrDB = new UserDatabase();
+    private static volatile Venue venue1 = new Venue();  //  the venue the user is accessing
+    private static volatile UserDatabase usrDB = new UserDatabase();  //  a list of all users created
 
-    private ServerSocket serverSocket;
-    private boolean running = false;
-    private ExecutorService pool;
+    private ServerSocket serverSocket;  //  the serversocket used to connect to the client
+    private boolean running = false;  //  boolean value for checking if the server is running
+    private ExecutorService pool;  //  executorservice to manage threads of clilents
 
-    private int port;
-    private final ArrayList<Socket> clients = new ArrayList<>();
+    private int port;  // port used to connect to client
+    private final ArrayList<Socket> clients = new ArrayList<>();  // list of clients
 
     /**
      * Creates the server with a specific port to connect to the client
@@ -52,6 +65,9 @@ public class reservationServer implements Runnable, ReservationServerInterface {
         new Thread(this).start();
     }
 
+    /**
+     * Stops and closes the server
+     */
     public void stop() {
         running = false;
         try {
@@ -61,6 +77,9 @@ public class reservationServer implements Runnable, ReservationServerInterface {
         pool.shutdownNow();
     }
 
+    /**
+     * Connects the server to the client
+     */
     public void run() {
         if (running) {
             System.out.println("Server running...");
@@ -77,38 +96,73 @@ public class reservationServer implements Runnable, ReservationServerInterface {
         }
     }
 
+    /**
+     * Returns the port number
+     *
+     * @return port
+     */
     public int getPort() {
         return port;
     }
 
+    /**
+     * Checks if the server is running
+     *
+     * @return running
+     */
     public boolean isRunning() {
         return running;
     }
 
+    /**
+     * Returns number of clients online
+     *
+     * @return clients.size()
+     */
     public int getClientCount() {
         synchronized (clients) {
             return clients.size();
         }
     }
 
+    /**
+     * Returns the venue
+     *
+     * @return venue1
+     */
     public Venue getVenue1() {
         return venue1;
     }
 
+    /**
+     * Returns the list of users created
+     *
+     * @return usrDB
+     */
     public UserDatabase getUserDB() {
         return usrDB;
     }
 
-
+    /**
+     * Handles interaction between server and client
+     */
     private static class clientHandler implements Runnable {
-        private Socket socket;
-        private User clientUser;
-        private boolean loggedIn;
+        private Socket socket;  // socket used to connect server and client
+        private User clientUser;  // User object of the current client
+        private boolean loggedIn;  // boolean value if the client has logged in
 
+        /**
+         * Sets client's socket to a given socket
+         *
+         * @param socket used to connect client to server
+         */
         public clientHandler(Socket socket) {
             this.socket = socket;
         }
 
+        /**
+         * Reads client's input and makes changes in server
+         */
         public void run() {
             //DO THE CLIENT STUFF
 
