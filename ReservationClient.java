@@ -11,10 +11,10 @@ import java.util.Scanner;
  *
  */
 
-public class ReservationClient implements ReservationClientInterface {
+public class ReservationClient{
 
-    private String host;
-    private int port;
+    private static String host;
+    private static int port;
 
     public ReservationClient(String host, int port) {
         this.host = host;
@@ -178,7 +178,7 @@ public class ReservationClient implements ReservationClientInterface {
                 }
 
                 if (next.equals("EXIT")) {
-                    break;
+                    return;
                 }
 
         } catch (IOException e) {

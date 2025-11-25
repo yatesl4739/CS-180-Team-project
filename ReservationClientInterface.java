@@ -8,5 +8,4 @@
  */
 public interface ReservationClientInterface {
 
-    void run();
 }
