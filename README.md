@@ -34,4 +34,5 @@ The User object is a object that represnts a signle user that would be creating 
 First run the ReservationServer that sets up a socket for the client to connect to. 
 Then run the ReservationClient.java which will attempt to connect to the reservation server. Then you can just test away!
 The first thing it will do is tell the client the venue name and events happening at that venue, and then give the client options to either sign in or make an account. 
-Once the client is logged into the server under their user they can create a reservation for an event, list the events again, see their current reservations, or exit
+Once the client is logged into the server under their user they can create a reservation for an event, list the events again, see their current reservations, or exit.
+Using that info you can just do whatever you want to try and test inputs to the server or test outputs. Some outputs are not optimized because they will be improved for GUI. the CLI is minimal
