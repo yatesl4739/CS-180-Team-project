@@ -13,10 +13,16 @@ public class reservationServer implements Runnable, ReservationServerInterface {
 
     private ServerSocket serverSocket;
     private boolean running = false;
-    private ExecutorService pool = Executors.newCachedThreadPool();
+    private ExecutorService pool;
 
-    public reservationServer(int port) throws IOException {
-        serverSocket = new ServerSocket(port);
+    public reservationServer()  {
+        try {
+            serverSocket = new ServerSocket(4242);
+            pool = Executors.newCachedThreadPool();
+            System.out.println("Server created");
+        } catch (IOException e) {
+            throw new RuntimeException("Can't start server", e);
+        }
     }
 
     public void start() {
@@ -44,6 +50,12 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                 e.printStackTrace();
             }
         }
+    }
+
+
+    public static void main(String[] args) {
+        reservationServer serv = new reservationServer();
+        serv.start();
     }
 
 
