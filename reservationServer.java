@@ -262,6 +262,9 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                             outputSeatingChart += "\n";
                         }
 
+                        pr.println(outputSeatingChart);
+                        pr.println("ENDCHART");
+
                         int numPeople = Integer.parseInt(br.readLine());
 
                         long time = Long.parseLong(br.readLine());
