@@ -15,9 +15,14 @@ public class reservationServer implements Runnable, ReservationServerInterface {
     private boolean running = false;
     private ExecutorService pool;
 
-    public reservationServer()  {
+    private int port;
+    private final ArrayList<Socket> clients = new ArrayList<>();
+
+    public reservationServer(int port)  {
+
+        this.port = port;
         try {
-            serverSocket = new ServerSocket(4242);
+            serverSocket = new ServerSocket(port);
             pool = Executors.newCachedThreadPool();
             System.out.println("Server created");
         } catch (IOException e) {
@@ -26,6 +31,10 @@ public class reservationServer implements Runnable, ReservationServerInterface {
     }
 
     public void start() {
+
+        if (running) {
+            throw new IllegalStateException("Server is already running");
+        }
         running = true;
         new Thread(this).start();
     }
@@ -54,11 +63,28 @@ public class reservationServer implements Runnable, ReservationServerInterface {
         }
     }
 
-
-    public static void main(String[] args) {
-        reservationServer serv = new reservationServer();
-        serv.start();
+    public int getPort() {
+        return port;
     }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    public int getClientCount() {
+        synchronized (clients) {
+            return clients.size();
+        }
+    }
+
+    public Venue getVenue1() {
+        return venue1;
+    }
+
+    public UserDatabase getUserDB() {
+        return usrDB;
+    }
+
 
 
     private static class clientHandler implements Runnable {
