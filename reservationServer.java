@@ -39,7 +39,9 @@ public class reservationServer implements Runnable, ReservationServerInterface {
     }
 
     public void run() {
-        System.out.println("Server running...");
+        if (running) {
+            System.out.println("Server running...");
+        }
 
         while (running) {
             try {
@@ -80,7 +82,7 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                 //EVERYTHING BELOW THIS LINE IS COMMUNICATION TO A CERTAIN CLIENT INSTANCE.
 
                 //GIVE THE CLIENT THE VENUE INFO
-                pr.write("VENUENAME:" + venue1.getVenueName());
+                pr.println("VENUENAME:" + venue1.getVenueName());
 
                 //client would see something like options to do:
                 //login, sign up, or view events
@@ -98,11 +100,11 @@ public class reservationServer implements Runnable, ReservationServerInterface {
 
                         clientUser = usrDB.login(username, password);
                         if (clientUser.getUsername().equals("PASSWORD INCORRECT")) {
-                            pr.write("Error: password incorrect");
+                            pr.println("Error: password incorrect");
                         } else if (clientUser.getUsername().equals("USER NOT FOUND")) {
-                            pr.write("Error: user not found");
+                            pr.println("Error: user not found");
                         } else {
-                            pr.write("Success login with Username:" + username);
+                            pr.println("Success login with Username:" + username);
                             good = true;
                         }
                     }
@@ -121,15 +123,15 @@ public class reservationServer implements Runnable, ReservationServerInterface {
 
                         clientUser = usrDB.signUp(username, password);
                         if (clientUser.getUsername().equals("INVALID USERNAME")) {
-                            pr.write("Error: Invalid Username");
+                            pr.println("Error: Invalid Username");
 
                         } else if (clientUser.getUsername().equals("USERNAME TAKEN")) {
-                            pr.write("Error: Username has been taken");
+                            pr.println("Error: Username has been taken");
                         } else if (clientUser.getUsername().equals("PASSWORD INVALID")) {
-                            pr.write("Error: Password is invalid");
+                            pr.println("Error: Password is invalid");
 
                         } else {
-                            pr.write("Success sign up and login with Username:" + username);
+                            pr.println("Success sign up and login with Username:" + username);
                             good = true;
                         }
                     }
@@ -158,7 +160,7 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                     //another hashtag added at the end of the string
                     returnEvents += "#";
 
-                    pr.write(returnEvents);
+                    pr.println(returnEvents);
                 }
 
 
@@ -192,7 +194,7 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                     //another hashtag added at the end of the string
                     returnEvents += "#";
 
-                    pr.write(returnEvents);
+                    pr.println(returnEvents);
 
                     //-1 to make it an index becauase the client side will select starting at 1.
                     int eventSelect = Integer.parseInt(br.readLine()) - 1;
@@ -271,7 +273,7 @@ public class reservationServer implements Runnable, ReservationServerInterface {
 
                     }
 
-                    pr.write(returnString);
+                    pr.println(returnString);
                 } else if (nextInput.equals("EVENTS")) {
                     //view events
 
@@ -295,7 +297,7 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                     //another hashtag added at the end of the string
                     returnEvents += "#";
 
-                    pr.write(returnEvents);
+                    pr.println(returnEvents);
                 }
                 //TODO: add password reset ability
 
