@@ -30,6 +30,32 @@ public class ReservationClient {
             // read the venue name from server
             String venueLine = br.readLine();
             System.out.println("Connected to server. " + venueLine);
+
+            //GRAB INCOMMING EVENTS
+            {
+                String raw = br.readLine();
+
+                if (raw.startsWith("#") && raw.endsWith("#")) {
+                    raw = raw.substring(1, raw.length() - 1);
+                }
+
+                String[] eventArr = raw.split("\\$\\$");
+
+                System.out.println("\nEvents:");
+                for (int i = 0; i < eventArr.length; i++) {
+
+                    String e = eventArr[i];
+                    String[] nameDay = e.split("%%");
+                    String name = nameDay[0];
+
+                    String[] dayTime = nameDay[1].split("@@");
+                    String day = dayTime[0];
+                    String time = dayTime[1];
+
+                    System.out.println((i + 1) + ") " + name + " on " + day + " at " + time);
+                }
+            }
+
             // initial command
             boolean goodToGo = false;
 

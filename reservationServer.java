@@ -30,6 +30,11 @@ public class reservationServer implements Runnable, ReservationServerInterface {
         }
     }
 
+    public static void main(String[] args) {
+        reservationServer serv = new reservationServer(4242);
+        serv.start();
+    }
+
     public void start() {
 
         if (running) {
@@ -110,8 +115,37 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                 //GIVE THE CLIENT THE VENUE INFO
                 pr.println("VENUENAME:" + venue1.getVenueName());
 
+
+                //view events
+
+                //single hashtag represents the start of the string
+                {
+                    String returnEvents = "#";
+                    ArrayList<Event> eventDB = venue1.getEventDatabase().getEvents();
+                    for (int i = 0; i < eventDB.size(); i++) {
+                        if (i == eventDB.size() - 1) {
+                            //$$ represents seperator between event names
+                            //%% is seperator between day and event name,
+                            // and @@ is seperator between day and time
+                            returnEvents += eventDB.get(i).getEventName() + "%%";
+                            returnEvents += eventDB.get(i).getDay() + "@@";
+                            returnEvents += eventDB.get(i).getTimeOfDay() + "$$";
+                        } else {
+                            returnEvents += eventDB.get(i).getEventName() + "%%";
+                            returnEvents += eventDB.get(i).getDay() + "@@";
+                            returnEvents += eventDB.get(i).getTimeOfDay();
+                        }
+                    }
+                    //another hashtag added at the end of the string
+                    returnEvents += "#";
+
+                    pr.println(returnEvents);
+                }
+
                 //client would see something like options to do:
-                //login, sign up, or view events
+                //login, sign up
+
+
 
                 String nextInput = br.readLine();
 
@@ -163,30 +197,6 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                     }
                     while (!good);
 
-                } else if (nextInput.equals("EVENTS")) {
-                    //view events
-
-                    //single hashtag represents the start of the string
-                    String returnEvents = "#";
-                    ArrayList<Event> eventDB = venue1.getEventDatabase().getEvents();
-                    for (int i = 0; i < eventDB.size(); i++) {
-                        if (i == eventDB.size() - 1) {
-                            //$$ represents seperator between event names
-                            //%% is seperator between day and event name,
-                            // and @@ is seperator between day and time
-                            returnEvents += eventDB.get(i).getEventName() + "%%";
-                            returnEvents += eventDB.get(i).getDay() + "@@";
-                            returnEvents += eventDB.get(i).getTimeOfDay() + "$$";
-                        } else {
-                            returnEvents += eventDB.get(i).getEventName() + "%%";
-                            returnEvents += eventDB.get(i).getDay() + "@@";
-                            returnEvents += eventDB.get(i).getTimeOfDay();
-                        }
-                    }
-                    //another hashtag added at the end of the string
-                    returnEvents += "#";
-
-                    pr.println(returnEvents);
                 }
 
 
