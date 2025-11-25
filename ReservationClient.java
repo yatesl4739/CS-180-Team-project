@@ -5,10 +5,9 @@ import java.util.Scanner;
 /**
  * ReservationClient
  *
- * This program allows a client to connect
- * to the server in order to make a
- * reservation or view current reservations
- * through an account.
+ * This program allows a client to connect to the reservationServer
+ * to log in, sign up, create new reservations, and view existing
+ * reservations.
  *
  * @author Meraj Syeda & Krish Talati, Lab Sec L12
  * @version 11/24/25
@@ -16,13 +15,12 @@ import java.util.Scanner;
 
 public class ReservationClient {
 
-    private static String host = "localhost";  // host used to connect server and client
-    private static int port = 4242;  // port used to connect server and client
+    private static String host = "localhost";   // host address for server
+    private static int port = 4242;             // port number for server
 
     /**
-     * Connects the client to the server, loops
-     * until all changes are made and the user either
-     * logs out or exits the program.
+     * Connects the client to the server and handles all
+     * user interaction until logout or exit.
      *
      * @param args not used
      */
@@ -33,18 +31,20 @@ public class ReservationClient {
             PrintWriter pr = new PrintWriter(socket.getOutputStream(), true);
             Scanner sc = new Scanner(System.in);
 
-            // read the venue name from server
+            // Reads venue name sent by server
             String venueLine = br.readLine();
             System.out.println("Connected to server. " + venueLine);
 
-            //GRAB INCOMING EVENTS
+            // Reads initial events list from server once connected
             {
                 String raw = br.readLine();
 
+                // Remove surrounding # symbols
                 if (raw.startsWith("#") && raw.endsWith("#")) {
                     raw = raw.substring(1, raw.length() - 1);
                 }
 
+                // Split event entries
                 String[] eventArr = raw.split("\\$\\$");
 
                 System.out.println("\nEvents:");
@@ -62,7 +62,7 @@ public class ReservationClient {
                 }
             }
 
-            // initial command
+            // Ensures user enters LOGIN or SIGNUP successfully
             boolean goodToGo = false;
 
             do {
@@ -70,13 +70,13 @@ public class ReservationClient {
                 String cmd = sc.nextLine().toUpperCase().trim();
 
                 if (cmd.equals("LOGIN") || cmd.equals("SIGNUP")) {
-                    pr.println(cmd);
+                    pr.println(cmd);  // send command to server
                 }
 
-
-                // LOGIN
+                // LOGIN handling
                 if (cmd.equals("LOGIN")) {
                     goodToGo = true;
+
                     while (true) {
                         System.out.println("Username: ");
                         pr.println(sc.nextLine());
@@ -93,9 +93,10 @@ public class ReservationClient {
                     }
                 }
 
-                // SIGNUP
+                // SIGNUP handling
                 else if (cmd.equals("SIGNUP")) {
                     goodToGo = true;
+
                     while (true) {
                         System.out.println("Create Username: ");
                         pr.println(sc.nextLine());
@@ -113,21 +114,23 @@ public class ReservationClient {
                 } else {
                     System.out.println("Invalid input.");
                 }
-            }
-            while (!goodToGo);
+
+            } while (!goodToGo);
 
             boolean loggedIn = true;
 
+            // Loop continues while user is logged in
             while (loggedIn) {
 
-                // second command
+                // Ask for next action
                 System.out.println("Next command: NEW / VIEW / EVENTS / LOGOUT / EXIT");
                 String next = sc.nextLine().toUpperCase().trim();
                 pr.println(next);
 
-                // NEW reservation
+                // NEW reservation flow
                 if (next.equals("NEW")) {
 
+                    // Read events list for choosing
                     String rawEvents = br.readLine();
                     System.out.println("\nAvailable Events:");
 
@@ -135,9 +138,9 @@ public class ReservationClient {
                         rawEvents = rawEvents.substring(1, rawEvents.length() - 1);
                     }
 
-                    System.out.println("\nAvailable Events:");
                     String[] eventArr = rawEvents.split("\\$\\$");
 
+                    // Print events
                     for (int i = 0; i < eventArr.length; i++) {
                         String e = eventArr[i];
 
@@ -151,22 +154,27 @@ public class ReservationClient {
                         System.out.println((i + 1) + ") " + name + " on " + day + " at " + time);
                     }
 
+                    // Send chosen event number
                     System.out.print("Select event number: ");
                     int choice = Integer.parseInt(sc.nextLine());
                     pr.println(choice);
 
+                    // Seating chart output
                     System.out.println("\nSeating Chart (o = open, x = taken): ");
                     String line = br.readLine();
 
+                    // Print full 2D seating chart until ENDCHART signal
                     while (line != null && !line.equals("ENDCHART")) {
                         System.out.println(line);
                         line = br.readLine();
                     }
 
+                    // Send number of people
                     System.out.print("Number of people: ");
                     String people = sc.nextLine();
                     pr.println(people);
 
+                    // Send timestamp info
                     System.out.print("Time (long): ");
                     String t = sc.nextLine();
                     pr.println(t);
@@ -175,6 +183,7 @@ public class ReservationClient {
                     String d = sc.nextLine();
                     pr.println(d);
 
+                    // Seat coordinates
                     System.out.print("Enter seats as x1,y1,x2,y2,... : ");
                     String seats = sc.nextLine();
                     pr.println(seats);
@@ -182,7 +191,9 @@ public class ReservationClient {
                     System.out.println("Reservation sent.\n");
 
 
-                } else if (next.equals("VIEW")) {
+                }
+                // VIEW reservations
+                else if (next.equals("VIEW")) {
                     String raw = br.readLine();
 
                     if (raw == null || raw.trim().isEmpty()) {
@@ -195,7 +206,9 @@ public class ReservationClient {
                         }
                     }
 
-                } else if (next.equals("EVENTS")) {
+                }
+                // EVENTS listing again
+                else if (next.equals("EVENTS")) {
                     String raw = br.readLine();
 
                     if (raw.startsWith("#") && raw.endsWith("#")) {
@@ -217,10 +230,14 @@ public class ReservationClient {
 
                         System.out.println((i + 1) + ") " + name + " on " + day + " at " + time);
                     }
-                } else if (next.equals("LOGOUT")) {
+
+                }
+                // LOGOUT
+                else if (next.equals("LOGOUT")) {
                     loggedIn = false;
                 }
 
+                // EXIT closes client
                 if (next.equals("EXIT")) {
                     return;
                 }
@@ -230,6 +247,4 @@ public class ReservationClient {
             e.printStackTrace();
         }
     }
-
-
 }
