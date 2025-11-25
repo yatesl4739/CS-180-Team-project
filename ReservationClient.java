@@ -3,17 +3,29 @@ import java.net.Socket;
 import java.util.Scanner;
 
 /**
- * ReservationDatabase
+ * ReservationClient
  *
- * @author Meraj Syeda & Krish Talati
- * @version 11/23/25
+ * This program allows a client to connect
+ * to the server in order to make a
+ * reservation or view current reservations
+ * through an account.
+ *
+ * @author Meraj Syeda & Krish Talati, Lab Sec L12
+ * @version 11/24/25
  */
 
 public class ReservationClient {
 
-    private static String host = "localhost";
-    private static int port = 4242;
+    private static String host = "localhost";  // host used to connect server and client
+    private static int port = 4242;  // port used to connect server and client
 
+    /**
+     * Connects the client to the server, loops
+     * until all changes are made and the user either
+     * logs out or exits the program.
+     *
+     * @param args not used
+     */
     public static void main(String[] args) {
         try (Socket socket = new Socket(host, port)) {
 
