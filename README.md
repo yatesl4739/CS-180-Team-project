@@ -29,3 +29,9 @@ The Venue object is more or less just the overall main class that holds everythi
 ### User - Chelsea
 
 The User object is a object that represnts a signle user that would be creating reservations for our service. A User contains things like a Username, a Password, and a reservation database object. The job of the user object is just to keep data on the user, remember the users reservations and data, and handle requests made by the user. 
+
+## How to test
+First run the ReservationServer that sets up a socket for the client to connect to. 
+Then run the ReservationClient.java which will attempt to connect to the reservation server. Then you can just test away!
+The first thing it will do is tell the client the venue name and events happening at that venue, and then give the client options to either sign in or make an account. 
+Once the client is logged into the server under their user they can create a reservation for an event, list the events again, see their current reservations, or exit
