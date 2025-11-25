@@ -18,7 +18,7 @@ public class reservationServer implements Runnable, ReservationServerInterface {
     private int port;
     private final ArrayList<Socket> clients = new ArrayList<>();
 
-    public reservationServer(int port)  {
+    public reservationServer(int port) {
 
         this.port = port;
         try {
@@ -48,7 +48,8 @@ public class reservationServer implements Runnable, ReservationServerInterface {
         running = false;
         try {
             serverSocket.close();
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) {
+        }
         pool.shutdownNow();
     }
 
@@ -89,7 +90,6 @@ public class reservationServer implements Runnable, ReservationServerInterface {
     public UserDatabase getUserDB() {
         return usrDB;
     }
-
 
 
     private static class clientHandler implements Runnable {
@@ -144,7 +144,6 @@ public class reservationServer implements Runnable, ReservationServerInterface {
 
                 //client would see something like options to do:
                 //login, sign up
-
 
 
                 String nextInput = br.readLine();
@@ -336,8 +335,6 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                     pr.println(returnEvents);
                 }
                 //TODO: add password reset ability
-
-
 
 
                 //TODO: make everything above a loop so a user can stay in the thingy

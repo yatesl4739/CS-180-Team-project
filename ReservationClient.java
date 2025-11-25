@@ -60,12 +60,12 @@ public class ReservationClient {
             boolean goodToGo = false;
 
             do {
-            System.out.println("Enter command: LOGIN / SIGNUP");
-            String cmd = sc.nextLine().toUpperCase().trim();
+                System.out.println("Enter command: LOGIN / SIGNUP");
+                String cmd = sc.nextLine().toUpperCase().trim();
 
-            if (cmd.equals("LOGIN") || cmd.equals("SIGNUP")) {
-                pr.println(cmd);
-            }
+                if (cmd.equals("LOGIN") || cmd.equals("SIGNUP")) {
+                    pr.println(cmd);
+                }
 
 
                 // LOGIN
@@ -104,8 +104,7 @@ public class ReservationClient {
                             break;
                         }
                     }
-                }
-                else {
+                } else {
                     System.out.println("Invalid input.");
                 }
             }
