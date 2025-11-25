@@ -20,7 +20,6 @@ public class ReservationClient {
     }
 
     public static void main(String[] args) {
-        ReservationClient client = new ReservationClient("localhost", 4242);
         try (Socket socket = new Socket(host, port)) {
 
             BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
