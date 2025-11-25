@@ -25,7 +25,7 @@ public class ReservationClient {
             String venueLine = br.readLine();
             System.out.println("Connected to server. " + venueLine);
 
-            //GRAB INCOMMING EVENTS
+            //GRAB INCOMING EVENTS
             {
                 String raw = br.readLine();
 
