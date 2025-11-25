@@ -6,12 +6,10 @@ import java.util.Scanner;
  * ReservationDatabase
  *
  * @author Meraj Syeda & Krish Talati
- *
  * @version 11/23/25
- *
  */
 
-public class ReservationClient{
+public class ReservationClient {
 
     private static String host;
     private static int port;
@@ -32,13 +30,21 @@ public class ReservationClient{
             // read the venue name from server
             String venueLine = br.readLine();
             System.out.println("Connected to server. " + venueLine);
-                // initial command
-                System.out.println("Enter command: LOGIN / SIGNUP / EVENTS");
-                String cmd = sc.nextLine().toUpperCase().trim();
+            // initial command
+            boolean goodToGo = false;
+
+            do {
+            System.out.println("Enter command: LOGIN / SIGNUP");
+            String cmd = sc.nextLine().toUpperCase().trim();
+
+            if (cmd.equals("LOGIN") || cmd.equals("SIGNUP")) {
                 pr.println(cmd);
+            }
+
 
                 // LOGIN
                 if (cmd.equals("LOGIN")) {
+                    goodToGo = true;
                     while (true) {
                         System.out.println("Username: ");
                         pr.println(sc.nextLine());
@@ -57,6 +63,7 @@ public class ReservationClient{
 
                 // SIGNUP
                 else if (cmd.equals("SIGNUP")) {
+                    goodToGo = true;
                     while (true) {
                         System.out.println("Create Username: ");
                         pr.println(sc.nextLine());
@@ -72,120 +79,118 @@ public class ReservationClient{
                         }
                     }
                 }
+                else {
+                    System.out.println("Invalid input.");
+                }
+            }
+            while (!goodToGo);
 
-                // EVENTS
-                else if (cmd.equals("EVENTS")) {
-                    String events = br.readLine();
-                    System.out.println("Events: " + events);
+            // second command
+            System.out.println("Next command: NEW / VIEW / EVENTS / EXIT");
+            String next = sc.nextLine().toUpperCase().trim();
+            pr.println(next);
+
+            // NEW reservation
+            if (next.equals("NEW")) {
+
+                String rawEvents = br.readLine();
+                System.out.println("\nAvailable Events:");
+
+                if (rawEvents.startsWith("#") && rawEvents.endsWith("#")) {
+                    rawEvents = rawEvents.substring(1, rawEvents.length() - 1);
                 }
 
-                // second command
-                System.out.println("Next command: NEW / VIEW / EVENTS / EXIT");
-                String next = sc.nextLine().toUpperCase().trim();
-                pr.println(next);
+                String[] eventArr = rawEvents.split("\\$\\$");
 
-                // NEW reservation
-                if (next.equals("NEW")) {
+                for (int i = 0; i < eventArr.length; i++) {
+                    String e = eventArr[i];
 
-                    String rawEvents = br.readLine();
-                    System.out.println("\nAvailable Events:");
+                    String[] nameDay = e.split("%%");
+                    String name = nameDay[0];
 
-                    if (rawEvents.startsWith("#") && rawEvents.endsWith("#")) {
-                        rawEvents = rawEvents.substring(1, rawEvents.length() - 1);
-                    }
+                    String[] dayTime = nameDay[1].split("@@");
+                    String day = dayTime[0];
+                    String time = dayTime[1];
 
-                    String[] eventArr = rawEvents.split("\\$\\$");
+                    System.out.println((i + 1) + ") " + name + " on " + day + " at " + time);
+                }
 
-                    for (int i = 0; i < eventArr.length; i++) {
-                        String e = eventArr[i];
+                System.out.print("Select event number: ");
+                int choice = Integer.parseInt(sc.nextLine());
+                pr.println(choice);
 
-                        String[] nameDay = e.split("%%");
-                        String name = nameDay[0];
+                System.out.println("\nSeating Chart:");
+                String line = br.readLine();
 
-                        String[] dayTime = nameDay[1].split("@@");
-                        String day = dayTime[0];
-                        String time = dayTime[1];
+                while (line != null && !line.equals("ENDCHART")) {
+                    System.out.println(line);
+                    line = br.readLine();
+                }
 
-                        System.out.println((i + 1) + ") " + name + " on " + day + " at " + time);
-                    }
+                System.out.print("Number of people: ");
+                String people = sc.nextLine();
+                pr.println(people);
 
-                    System.out.print("Select event number: ");
-                    int choice = Integer.parseInt(sc.nextLine());
-                    pr.println(choice);
+                System.out.print("Time (long): ");
+                String t = sc.nextLine();
+                pr.println(t);
 
-                    System.out.println("\nSeating Chart:");
-                    String line = br.readLine();
+                System.out.print("Date (long): ");
+                String d = sc.nextLine();
+                pr.println(d);
 
-                    while (line != null && !line.equals("ENDCHART")) {
-                        System.out.println(line);
-                        line = br.readLine();
-                    }
+                System.out.print("Enter seats as x1,y1,x2,y2,... : ");
+                String seats = sc.nextLine();
+                pr.println(seats);
 
-                    System.out.print("Number of people: ");
-                    String people = sc.nextLine();
-                    pr.println(people);
-
-                    System.out.print("Time (long): ");
-                    String t = sc.nextLine();
-                    pr.println(t);
-
-                    System.out.print("Date (long): ");
-                    String d = sc.nextLine();
-                    pr.println(d);
-
-                    System.out.print("Enter seats as x1,y1,x2,y2,... : ");
-                    String seats = sc.nextLine();
-                    pr.println(seats);
-
-                    System.out.println("Reservation sent.\n");
+                System.out.println("Reservation sent.\n");
 
 
-                } else if (next.equals("VIEW")) {
-                    String raw = br.readLine();
+            } else if (next.equals("VIEW")) {
+                String raw = br.readLine();
 
-                    if (raw == null || raw.trim().isEmpty()) {
-                        System.out.println("No reservations found.");
-                    } else {
-                        String[] resArr = raw.split("\\$\\$");
-                        System.out.println("\nYour Reservations:");
-                        for (String r : resArr) {
-                            System.out.println("- " + r);
-                        }
-                    }
-
-                } else if (next.equals("EVENTS")) {
-                    String raw = br.readLine();
-
-                    if (raw.startsWith("#") && raw.endsWith("#")) {
-                        raw = raw.substring(1, raw.length() - 1);
-                    }
-
-                    String[] eventArr = raw.split("\\$\\$");
-
-                    System.out.println("\nEvents:");
-                    for (int i = 0; i < eventArr.length; i++) {
-
-                        String e = eventArr[i];
-                        String[] nameDay = e.split("%%");
-                        String name = nameDay[0];
-
-                        String[] dayTime = nameDay[1].split("@@");
-                        String day = dayTime[0];
-                        String time = dayTime[1];
-
-                        System.out.println((i + 1) + ") " + name + " on " + day + " at " + time);
+                if (raw == null || raw.trim().isEmpty()) {
+                    System.out.println("No reservations found.");
+                } else {
+                    String[] resArr = raw.split("\\$\\$");
+                    System.out.println("\nYour Reservations:");
+                    for (String r : resArr) {
+                        System.out.println("- " + r);
                     }
                 }
 
-                if (next.equals("EXIT")) {
-                    return;
+            } else if (next.equals("EVENTS")) {
+                String raw = br.readLine();
+
+                if (raw.startsWith("#") && raw.endsWith("#")) {
+                    raw = raw.substring(1, raw.length() - 1);
                 }
+
+                String[] eventArr = raw.split("\\$\\$");
+
+                System.out.println("\nEvents:");
+                for (int i = 0; i < eventArr.length; i++) {
+
+                    String e = eventArr[i];
+                    String[] nameDay = e.split("%%");
+                    String name = nameDay[0];
+
+                    String[] dayTime = nameDay[1].split("@@");
+                    String day = dayTime[0];
+                    String time = dayTime[1];
+
+                    System.out.println((i + 1) + ") " + name + " on " + day + " at " + time);
+                }
+            }
+
+            if (next.equals("EXIT")) {
+                return;
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 
 
 }
