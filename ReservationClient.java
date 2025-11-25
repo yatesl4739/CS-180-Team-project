@@ -20,7 +20,6 @@ public class ReservationClient {
     }
 
     public static void main(String[] args) {
-        ReservationClient client = new ReservationClient("localhost", 4242);
         try (Socket socket = new Socket(host, port)) {
 
             BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -60,12 +59,12 @@ public class ReservationClient {
             boolean goodToGo = false;
 
             do {
-            System.out.println("Enter command: LOGIN / SIGNUP");
-            String cmd = sc.nextLine().toUpperCase().trim();
+                System.out.println("Enter command: LOGIN / SIGNUP");
+                String cmd = sc.nextLine().toUpperCase().trim();
 
-            if (cmd.equals("LOGIN") || cmd.equals("SIGNUP")) {
-                pr.println(cmd);
-            }
+                if (cmd.equals("LOGIN") || cmd.equals("SIGNUP")) {
+                    pr.println(cmd);
+                }
 
 
                 // LOGIN
@@ -104,8 +103,7 @@ public class ReservationClient {
                             break;
                         }
                     }
-                }
-                else {
+                } else {
                     System.out.println("Invalid input.");
                 }
             }
