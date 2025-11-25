@@ -135,6 +135,7 @@ public class ReservationClient {
                         rawEvents = rawEvents.substring(1, rawEvents.length() - 1);
                     }
 
+                    System.out.println("\nAvailable Events:");
                     String[] eventArr = rawEvents.split("\\$\\$");
 
                     for (int i = 0; i < eventArr.length; i++) {
@@ -154,7 +155,7 @@ public class ReservationClient {
                     int choice = Integer.parseInt(sc.nextLine());
                     pr.println(choice);
 
-                    System.out.println("\nSeating Chart:");
+                    System.out.println("\nSeating Chart (o = open, x = taken): ");
                     String line = br.readLine();
 
                     while (line != null && !line.equals("ENDCHART")) {
