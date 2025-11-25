@@ -309,12 +309,16 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                         String outputSeatingChart = "";
 
                         for (int i = 0; i < seatingChart.length; i++) {
+                            outputSeatingChart += "[";
                             for (int j = 0; j < seatingChart[i].length; j++) {
                                 outputSeatingChart += seatingChart[i][j];
-
+                                if (j < seatingChart[i].length - 1) {
+                                    outputSeatingChart += ",";
+                                }
                             }
                             outputSeatingChart += "\n";
                         }
+                        pr.println(outputSeatingChart);
 
                         int numPeople = Integer.parseInt(br.readLine());
 
