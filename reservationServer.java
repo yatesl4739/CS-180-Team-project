@@ -298,7 +298,7 @@ public class reservationServer implements Runnable, ReservationServerInterface {
 
                         pr.println(returnEvents);
 
-                        //-1 to make it an index becauase the client side will select starting at 1.
+                        //-1 to make it an index because the client side will select starting at 1.
                         int eventSelect = Integer.parseInt(br.readLine()) - 1;
 
                         //give them the seating chart
