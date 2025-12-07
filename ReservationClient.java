@@ -66,6 +66,7 @@ public class ReservationClient extends JFrame {
 
             String venueLine = br.readLine();
             String eventsLine = br.readLine();
+
             if (venueLine != null && venueLine.startsWith("VENUENAME:")) {
                 setTitle("Reservation Client - " + venueLine.substring("VENUENAME:".length()));
             }
@@ -107,7 +108,6 @@ public class ReservationClient extends JFrame {
         mainPanel.add(loginPanel, "Login");
         cardLayout.show(mainPanel, "Login");
 
-        boolean loginSucsess = false;
 
 
         // login button listener
@@ -131,6 +131,7 @@ public class ReservationClient extends JFrame {
                                 public void run() {
                                     loginOutputArea.append(response + "\n");
                                     loginBtn.setEnabled(true);
+
                                     if (response != null && response.startsWith("Success")) {
                                         showMenu();
 
@@ -292,7 +293,16 @@ public class ReservationClient extends JFrame {
                         pr.println("LOGOUT");
                         SwingUtilities.invokeLater(new Runnable() {
                             public void run() {
+
                                 JOptionPane.showMessageDialog(ReservationClient.this, "Logged out.");
+
+                                try {
+                                    br.readLine();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
+
                                 cardLayout.show(mainPanel, "Login");
                                 logoutBtn.setEnabled(true);
                             }

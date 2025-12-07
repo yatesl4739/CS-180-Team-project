@@ -210,6 +210,9 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                     //another hashtag added at the end of the string
                     returnEvents += "#";
 
+                    //DEBUGGING MESSAGE
+                    System.out.println("THE SERVER IS SENDING THIS OUT: " + returnEvents);
+
                     pr.println(returnEvents);
 
                     //DEBUGGING MESSAGE
@@ -255,6 +258,7 @@ public class reservationServer implements Runnable, ReservationServerInterface {
 
                                 loggedIn = true;
                             }
+                            System.out.println("THE SERVER SENT BACK LOGIN STATUS TO CLIENT");
 
 
                         //SIGNUP
@@ -284,6 +288,7 @@ public class reservationServer implements Runnable, ReservationServerInterface {
 
                                 loggedIn = true;
                             }
+                        System.out.println("THE SERVER SENT BACK SIGNUP STATUS TO CLIENT");
 
                     }
                 } while (!loggedIn);
@@ -336,6 +341,7 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                             returnEvents += "#";
 
                             pr.println(returnEvents);
+                            System.out.println("THE SERVER SENT OUT EVENT LIST"  + returnEvents);
 
                             //-1 to make it an index because the client side will select starting at 1.
                             System.out.println("User is asked to pick an event");
@@ -361,6 +367,8 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                             }
                             pr.println(outputSeatingChart);
                             pr.println("ENDCHART");
+
+                            System.out.println("SERVER SENT OUT SEATING CHART");
 
                             int numPeople = Integer.parseInt(br.readLine());
 
@@ -428,6 +436,9 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                             }
 
                             pr.println(returnString);
+
+                            System.out.println("SERVER SENT OUT SER RESERVATIONS");
+
                         } else if (nextInput.equals("EVENTS")) {
                             //view events
 
@@ -452,13 +463,15 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                             returnEvents += "#";
 
                             pr.println(returnEvents);
+                            System.out.println("THE SERVER SENT OUT EVENT LIST"  + returnEvents);
                         } else if (nextInput.equals("LOGOUT")) {
+
                             loggedIn = false;
+                            System.out.println("USER HAS SELECTED LOGOUT. THE LOGGEDIN BOOLEAN IS NOW" + loggedIn);
                         }
+
                         //TODO: add password reset ability
 
-
-                        //TODO: make everything above a loop so a user can stay in the thingy
 
                     }
                 }
