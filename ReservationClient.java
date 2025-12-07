@@ -105,6 +105,9 @@ public class ReservationClient extends JFrame {
         mainPanel.add(loginPanel, "Login");
         cardLayout.show(mainPanel, "Login");
 
+        boolean loginSucsess = false;
+
+
         // login button listener
         loginBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -116,17 +119,21 @@ public class ReservationClient extends JFrame {
                 new Thread(new Runnable() {
                     public void run() {
                         try {
-                            pr.println("LOGIN");
-                            pr.println(user);
-                            pr.println(pass);
-                            final String response = br.readLine();
+
+                                pr.println("LOGIN");
+                                pr.println(user);
+                                pr.println(pass);
+                                final String response = br.readLine();
+
                             SwingUtilities.invokeLater(new Runnable() {
                                 public void run() {
                                     loginOutputArea.append(response + "\n");
                                     loginBtn.setEnabled(true);
                                     if (response != null && response.startsWith("Success")) {
                                         showMenu();
+
                                     }
+
                                 }
                             });
                         } catch (IOException e) {
@@ -196,9 +203,12 @@ public class ReservationClient extends JFrame {
         newBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 newBtn.setEnabled(false);
+                System.out.println("Button pressed");
                 startNewReservationFlow(new Runnable() {
-                    public void run() { newBtn.setEnabled(true); }
+
+                    public void run() {}
                 });
+                newBtn.setEnabled(true);
             }
         });
 
@@ -314,6 +324,7 @@ public class ReservationClient extends JFrame {
 
         new Thread(new Runnable() {
             public void run() {
+
                 try {
                     pr.println("NEW");
                     final String eventsRaw = br.readLine(); // server sends events string
@@ -565,10 +576,48 @@ public class ReservationClient extends JFrame {
                 } else day = rest;
             }
             String display = name;
-            if (!day.isEmpty()) display += " on " + day;
-            if (!time.isEmpty()) display += " at " + time;
+            if (!day.isEmpty()) {
+
+                //handle epoch counter
+                //TODO: handle epoch stuff
+                display += " on " + day;
+            }
+
+            if (!time.isEmpty()) {
+
+                //TODO: format times
+
+                int timeHour = (Integer.parseInt(time) / 100);
+
+                String typeOfTime = "am";
+
+                if (timeHour > 12)
+                    typeOfTime = "pm";
+
+                timeHour = timeHour % 12;
+
+                display += " at " + timeHour + ":";
+
+                int timeInMinutes = 00;
+
+                if (typeOfTime.equals("pm")) {
+
+                    timeInMinutes = (Integer.parseInt(time) + 1200) - (timeHour * 1000);
+
+                }
+                else if (typeOfTime.equals("a,")) {
+
+                    timeInMinutes =  - (timeHour * 1000);
+                }
+
+                display += timeInMinutes + typeOfTime;
+
+
+
+            }
             out.add(display);
         }
+        System.out.println(out.getFirst());
         return out;
     }
 

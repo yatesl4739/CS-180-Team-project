@@ -176,13 +176,21 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                 //EVERYTHING BELOW THIS LINE IS COMMUNICATION TO A CERTAIN CLIENT INSTANCE.
 
                 //GIVE THE CLIENT THE VENUE INFO
+
+                //DEBUGGING MESSAGE
+                System.out.println("GIVING OUT VENUE INFO");
+
                 pr.println("VENUENAME:" + venue1.getVenueName());
 
 
                 //view events
 
                 //single hashtag represents the start of the string
+                while (true) {
                 {
+
+
+
                     String returnEvents = "#";
                     ArrayList<Event> eventDB = venue1.getEventDatabase().getEvents();
                     for (int i = 0; i < eventDB.size(); i++) {
@@ -192,228 +200,267 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                             // and @@ is seperator between day and time
                             returnEvents += eventDB.get(i).getEventName() + "%%";
                             returnEvents += eventDB.get(i).getDay() + "@@";
-                            returnEvents += eventDB.get(i).getTimeOfDay() + "$$";
+                            returnEvents += eventDB.get(i).getTimeOfDay();
                         } else {
                             returnEvents += eventDB.get(i).getEventName() + "%%";
                             returnEvents += eventDB.get(i).getDay() + "@@";
-                            returnEvents += eventDB.get(i).getTimeOfDay();
+                            returnEvents += eventDB.get(i).getTimeOfDay() + "$$";
                         }
                     }
                     //another hashtag added at the end of the string
                     returnEvents += "#";
 
                     pr.println(returnEvents);
+
+                    //DEBUGGING MESSAGE
+                    System.out.println("EVENT INFO GIVEN OUT BY SERVER");
+
                 }
 
                 //client would see something like options to do:
                 //login, sign up
 
+                String nextInput;
 
-                String nextInput = br.readLine();
+                do {
+                    //DEBUGGING MESSAGE
+                    System.out.println("READY FOR NEXT OPTION. POSSIBLE NEXT OPTIONS: LOGIN, SIGNUP");
 
-                //login:
-                if (nextInput.equals("LOGIN")) {
 
-                    boolean good = false;
+                    nextInput = br.readLine();
 
-                    do {
-                        String username = br.readLine();
-                        String password = br.readLine();
+                    //DEBUGGING MESSAGE
+                    System.out.println("THE CLIENT SENT BACK: " + nextInput);
 
-                        clientUser = usrDB.login(username, password);
-                        if (clientUser.getUsername().equals("PASSWORD INCORRECT")) {
-                            pr.println("Error: password incorrect");
-                        } else if (clientUser.getUsername().equals("USER NOT FOUND")) {
-                            pr.println("Error: user not found");
-                        } else {
-                            pr.println("Success login with Username:" + username);
-                            good = true;
-                            loggedIn = true;
-                        }
+                    //login:
+                    if (nextInput.equals("LOGIN")) {
+
+                            String username = br.readLine();
+
+                            //DEBUGGING MESSAGE
+                            System.out.println("The server recieved:" + username + " as the username");
+
+                            String password = br.readLine();
+
+                            //DEBUGGING MESSAGE
+                            System.out.println("The server recieved:" + password + " as the password");
+
+                            clientUser = usrDB.login(username, password);
+                            if (clientUser.getUsername().equals("PASSWORD INCORRECT")) {
+                                pr.println("Error: password incorrect");
+                            } else if (clientUser.getUsername().equals("USER NOT FOUND")) {
+                                pr.println("Error: user not found");
+                            } else {
+                                pr.println("Success login with Username:" + username);
+
+                                loggedIn = true;
+                            }
+
+
+                        //SIGNUP
+                    } else if (nextInput.equals("SIGNUP")) {
+
+                            String username = br.readLine();
+                            //DEBUGGING MESSAGE
+                            System.out.println("The server recieved:" + username + " as the username");
+
+                            String password = br.readLine();
+
+                            //DEBUGGING MESSAGE
+                            System.out.println("The server recieved:" + password + " as the password");
+
+
+                            clientUser = usrDB.signUp(username, password);
+                            if (clientUser.getUsername().equals("INVALID USERNAME")) {
+                                pr.println("Error: Invalid Username");
+
+                            } else if (clientUser.getUsername().equals("USERNAME TAKEN")) {
+                                pr.println("Error: Username has been taken");
+                            } else if (clientUser.getUsername().equals("PASSWORD INVALID")) {
+                                pr.println("Error: Password is invalid");
+
+                            } else {
+                                pr.println("Success sign up and login with Username:" + username);
+
+                                loggedIn = true;
+                            }
+
                     }
-                    while (!good);
-
-                    //SIGNUP
-                } else if (nextInput.equals("SIGNUP")) {
-
-                    boolean good = false;
-
-                    do {
-
-                        String username = br.readLine();
-                        String password = br.readLine();
+                } while (!loggedIn);
 
 
-                        clientUser = usrDB.signUp(username, password);
-                        if (clientUser.getUsername().equals("INVALID USERNAME")) {
-                            pr.println("Error: Invalid Username");
-
-                        } else if (clientUser.getUsername().equals("USERNAME TAKEN")) {
-                            pr.println("Error: Username has been taken");
-                        } else if (clientUser.getUsername().equals("PASSWORD INVALID")) {
-                            pr.println("Error: Password is invalid");
-
-                        } else {
-                            pr.println("Success sign up and login with Username:" + username);
-                            good = true;
-                            loggedIn = true;
-                        }
-                    }
-                    while (!good);
-
-                }
-
+                //DEBUGGING MESSAGE
+                System.out.println("Next possible server inputs: NEW to make a new reservation, VIEW to see all reservations for that user, EVENTS to see all events");
 
                 //move onto next possible selection
                 //make reservation, see users current reservations, see events, change password maybe
 
-                while (loggedIn) {
+                System.out.println("Checking to see if user is logged in");
 
-                    //get next selection input
-                    nextInput = br.readLine();
+                    while (loggedIn) {
+                        System.out.println("Starting option loop. User logged in");
 
-                    if (nextInput.equals("NEW")) {
-                        //make a new reservation
-
-                        //show events for the user to pick
-
-                        String returnEvents = "#";
-                        ArrayList<Event> eventDB = venue1.getEventDatabase().getEvents();
-                        for (int i = 0; i < eventDB.size(); i++) {
-                            if (i == eventDB.size() - 1) {
-                                //$$ represents seperator between event names
-                                //%% is seperator between day and event name,
-                                // and @@ is seperator between day and time
-                                returnEvents += eventDB.get(i).getEventName() + "%%";
-                                returnEvents += eventDB.get(i).getDay() + "@@";
-                                returnEvents += eventDB.get(i).getTimeOfDay() + "$$";
-                            } else {
-                                returnEvents += eventDB.get(i).getEventName() + "%%";
-                                returnEvents += eventDB.get(i).getDay() + "@@";
-                                returnEvents += eventDB.get(i).getTimeOfDay();
-                            }
-                        }
-                        //another hashtag added at the end of the string
-                        returnEvents += "#";
-
-                        pr.println(returnEvents);
-
-                        //-1 to make it an index because the client side will select starting at 1.
-                        int eventSelect = Integer.parseInt(br.readLine()) - 1;
-
-                        //give them the seating chart
-
-                        char[][] seatingChart = venue1.getEventDatabase().getEvents()
-                                .get(eventSelect).getSeatingChart();
-
-                        String outputSeatingChart = "";
-
-                        for (int i = 0; i < seatingChart.length; i++) {
-                            outputSeatingChart += "[";
-                            for (int j = 0; j < seatingChart[i].length; j++) {
-                                outputSeatingChart += seatingChart[i][j];
-                                if (j < seatingChart[i].length - 1) {
-                                    outputSeatingChart += ",";
-                                }
-                            }
-                            outputSeatingChart += "\n";
-                        }
-                        pr.println(outputSeatingChart);
-                        pr.println("ENDCHART");
-
-
-                        int numPeople = Integer.parseInt(br.readLine());
-
-                        long time = Long.parseLong(br.readLine());
-
-                        long date = Long.parseLong(br.readLine());
-
-
-                        //Seat selection input can come in as
-                        //x1,y1,x2,y2,x3,y3
+                        //get next selection input
                         nextInput = br.readLine();
 
-                        String[] xy = nextInput.split(",");
-                        int[] x = new int[xy.length / 2];
-                        int[] y = new int[xy.length / 2];
+                        //DEBUGGING MESSAGE
+                        System.out.println("Server recieved from client: " + nextInput);
+                        if (nextInput.equals("NEW")) {
+                            //make a new reservation
 
-                        for (int i = 0; i < xy.length; i++) {
-                            if (i % 2 == 0) {
-                                x[i / 2] = Integer.parseInt(xy[i]);
+                            //show events for the user to pick
 
-                            } else {
-                                y[i / 2] = Integer.parseInt(xy[i]);
-                            }
-                        }
+                            String returnEvents = "#";
+                            ArrayList<Event> eventDB = venue1.getEventDatabase().getEvents();
+                            for (int i = 0; i < eventDB.size(); i++) {
 
-                        //create a new reservation
-                        venue1.getEventDatabase().getEvents().get(eventSelect)
-                                .createReservation(x, y, clientUser, numPeople, time, date);
+                                if (i == eventDB.size() - 1) {
+                                    //DEBUGGING COMMENT
+                                    System.out.println("THE LAST EVENT IN THE LIST");
+                                    //$$ represents seperator between event names
+                                    //%% is seperator between day and event name,
+                                    // and @@ is seperator between day and time
+                                    returnEvents += eventDB.get(i).getEventName() + "%%";
+                                    returnEvents += eventDB.get(i).getDay() + "@@";
+                                    returnEvents += eventDB.get(i).getTimeOfDay();
 
-
-                    }
-
-                    //user can see all their reservations
-                    else if (nextInput.equals("VIEW")) {
-                        ArrayList<Reservation> userReservations = new ArrayList<Reservation>();
-
-                        for (int i = 0; i < venue1.getEventDatabase().getEvents().size(); i++) {
-                            ArrayList<Reservation> resDBTemp = venue1.getEventDatabase().
-                                    getEvents().get(i).getReservationDB().getReservations();
-                            for (int j = 0; j < resDBTemp.size(); j++) {
-                                if (resDBTemp.get(j).getUser().getUsername().equals(clientUser.getUsername())) {
-                                    userReservations.add(resDBTemp.get(j));
+                                } else {
+                                    //DEBUGGING COMMENT
+                                    System.out.println("event encoded");
+                                    returnEvents += eventDB.get(i).getEventName() + "%%";
+                                    returnEvents += eventDB.get(i).getDay() + "@@";
+                                    returnEvents += eventDB.get(i).getTimeOfDay() + "$$";
                                 }
                             }
-                        }
+                            //another hashtag added at the end of the string
+                            returnEvents += "#";
+
+                            pr.println(returnEvents);
+
+                            //-1 to make it an index because the client side will select starting at 1.
+                            System.out.println("User is asked to pick an event");
+                            int eventSelect = Integer.parseInt(br.readLine()) - 1;
+                            System.out.println("User gave back " + eventSelect + " as the selection");
+
+                            //give them the seating chart
+
+                            char[][] seatingChart = venue1.getEventDatabase().getEvents()
+                                    .get(eventSelect).getSeatingChart();
+
+                            String outputSeatingChart = "";
+
+                            for (int i = 0; i < seatingChart.length; i++) {
+                                outputSeatingChart += "[";
+                                for (int j = 0; j < seatingChart[i].length; j++) {
+                                    outputSeatingChart += seatingChart[i][j];
+                                    if (j < seatingChart[i].length - 1) {
+                                        outputSeatingChart += ",";
+                                    }
+                                }
+                                outputSeatingChart += "\n";
+                            }
+                            pr.println(outputSeatingChart);
+                            pr.println("ENDCHART");
+
+                            int numPeople = Integer.parseInt(br.readLine());
+
+                            long time = Long.parseLong(br.readLine());
+
+                            long date = Long.parseLong(br.readLine());
+
+                            System.out.println("Number of people entered " + numPeople + " time entered: " + time + " date entered" + date);
 
 
-                        //provideString of all reservations
-                        String returnString = "";
-                        for (int i = 0; i < userReservations.size(); i++) {
-                            //$$ marks the space between reservation strings
-                            if (i < userReservations.size() - 1) {
-                                returnString += userReservations.get(i).toString() + "$$";
-                            } else {
-                                //no $$ on this one beacuse its the last entry
-                                returnString += userReservations.get(i).toString();
+                            //Seat selection input can come in as
+                            //x1,y1,x2,y2,x3,y3
+
+                            System.out.println("Server waits for seat input in x1,y1,x2,y2 format");
+                            nextInput = br.readLine();
+                            System.out.println("Server recieved " + nextInput + "as seat input");
+
+
+                            String[] xy = nextInput.split(",");
+                            int[] x = new int[xy.length / 2];
+                            int[] y = new int[xy.length / 2];
+
+                            for (int i = 0; i < xy.length; i++) {
+                                if (i % 2 == 0) {
+                                    x[i / 2] = Integer.parseInt(xy[i]);
+
+                                } else {
+                                    y[i / 2] = Integer.parseInt(xy[i]);
+                                }
                             }
 
+                            //create a new reservation
+                            venue1.getEventDatabase().getEvents().get(eventSelect)
+                                    .createReservation(x, y, clientUser, numPeople, time, date);
+
+
                         }
 
-                        pr.println(returnString);
-                    } else if (nextInput.equals("EVENTS")) {
-                        //view events
+                        //user can see all their reservations
+                        else if (nextInput.equals("VIEW")) {
+                            ArrayList<Reservation> userReservations = new ArrayList<Reservation>();
 
-                        //single hashtag represents the start of the string
-                        String returnEvents = "#";
-                        ArrayList<Event> eventDB = venue1.getEventDatabase().getEvents();
-                        for (int i = 0; i < eventDB.size(); i++) {
-                            if (i == eventDB.size() - 1) {
-                                //$$ represents seperator between event names
-                                //%% is seperator between day and event name,
-                                // and @@ is seperator between day and time
-                                returnEvents += eventDB.get(i).getEventName() + "%%";
-                                returnEvents += eventDB.get(i).getDay() + "@@";
-                                returnEvents += eventDB.get(i).getTimeOfDay() + "$$";
-                            } else {
-                                returnEvents += eventDB.get(i).getEventName() + "%%";
-                                returnEvents += eventDB.get(i).getDay() + "@@";
-                                returnEvents += eventDB.get(i).getTimeOfDay();
+                            for (int i = 0; i < venue1.getEventDatabase().getEvents().size(); i++) {
+                                ArrayList<Reservation> resDBTemp = venue1.getEventDatabase().
+                                        getEvents().get(i).getReservationDB().getReservations();
+                                for (int j = 0; j < resDBTemp.size(); j++) {
+                                    if (resDBTemp.get(j).getUser().getUsername().equals(clientUser.getUsername())) {
+                                        userReservations.add(resDBTemp.get(j));
+                                    }
+                                }
                             }
-                        }
-                        //another hashtag added at the end of the string
-                        returnEvents += "#";
 
-                        pr.println(returnEvents);
-                    } else if (nextInput.equals("LOGOUT")) {
-                        loggedIn = false;
+
+                            //provideString of all reservations
+                            String returnString = "";
+                            for (int i = 0; i < userReservations.size(); i++) {
+                                //$$ marks the space between reservation strings
+                                if (i < userReservations.size() - 1) {
+                                    returnString += userReservations.get(i).toString();
+                                } else {
+                                    //no $$ on this one beacuse its the last entry
+                                    returnString += userReservations.get(i).toString() + "$$";
+                                }
+
+                            }
+
+                            pr.println(returnString);
+                        } else if (nextInput.equals("EVENTS")) {
+                            //view events
+
+                            //single hashtag represents the start of the string
+                            String returnEvents = "#";
+                            ArrayList<Event> eventDB = venue1.getEventDatabase().getEvents();
+                            for (int i = 0; i < eventDB.size(); i++) {
+                                if (i == eventDB.size() - 1) {
+                                    //$$ represents seperator between event names
+                                    //%% is seperator between day and event name,
+                                    // and @@ is seperator between day and time
+                                    returnEvents += eventDB.get(i).getEventName() + "%%";
+                                    returnEvents += eventDB.get(i).getDay() + "@@";
+                                    returnEvents += eventDB.get(i).getTimeOfDay();
+                                } else {
+                                    returnEvents += eventDB.get(i).getEventName() + "%%";
+                                    returnEvents += eventDB.get(i).getDay() + "@@";
+                                    returnEvents += eventDB.get(i).getTimeOfDay() + "$$";
+                                }
+                            }
+                            //another hashtag added at the end of the string
+                            returnEvents += "#";
+
+                            pr.println(returnEvents);
+                        } else if (nextInput.equals("LOGOUT")) {
+                            loggedIn = false;
+                        }
+                        //TODO: add password reset ability
+
+
+                        //TODO: make everything above a loop so a user can stay in the thingy
+
                     }
-                    //TODO: add password reset ability
-
-
-                    //TODO: make everything above a loop so a user can stay in the thingy
-
                 }
 
             } catch (IOException e) {
