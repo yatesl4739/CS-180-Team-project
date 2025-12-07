@@ -602,15 +602,15 @@ public class ReservationClient extends JFrame {
 
                 if (typeOfTime.equals("pm")) {
 
-                    timeInMinutes = (Integer.parseInt(time) + 1200) - (timeHour * 1000);
+                    timeInMinutes = Integer.parseInt(time) - (Integer.parseInt(time) / 100 * 100);
 
                 }
-                else if (typeOfTime.equals("a,")) {
+                else if (typeOfTime.equals("am")) {
 
-                    timeInMinutes =  - (timeHour * 1000);
+                    timeInMinutes =  Integer.parseInt(time) - (timeHour * 100);
                 }
 
-                display += timeInMinutes + typeOfTime;
+                display += String.format("%02d", timeInMinutes) + typeOfTime;
 
 
 
