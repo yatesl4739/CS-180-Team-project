@@ -88,6 +88,8 @@ public class ReservationClient extends JFrame {
         loginPassField = new JPasswordField();
         form.add(loginPassField);
 
+        loginUserField.addActionListener(e -> loginPassField.requestFocusInWindow());
+        
         JPanel btnRow = new JPanel();
         JButton loginBtn = new JButton("Login");
         JButton signupBtn = new JButton("Sign Up");
