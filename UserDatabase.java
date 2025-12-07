@@ -10,17 +10,24 @@ import java.io.*;
  * @version November 10, 2025
  */
 
-public class UserDatabase implements UserDatabaseInterface {
+public class UserDatabase implements UserDatabaseInterface, Serializable {
 
     private ArrayList<User> userDb;  // list of users
-    private final File SAVE_FILE = new File("/saveFiles/userDatabase.file");  // save file to write list of Users
+    private final File SAVE_FILE = new File("saveFiles/userDatabase.file");  // save file to write list of Users
 
     /**
      * Constructor given no parameters, creates empty list
      */
     public UserDatabase() {
-        userDb = new ArrayList<>();
-        updateSaveFile();
+        if (SAVE_FILE.canRead() &&
+                SAVE_FILE.exists() &&
+                SAVE_FILE.length() != 0) {
+            userDb = getObjectFromSaveFile().getUserDb();
+        }
+        else {
+            userDb = new ArrayList<>();
+            updateSaveFile();
+        }
     }
 
     /**
@@ -111,17 +118,54 @@ public class UserDatabase implements UserDatabaseInterface {
         }
     }
 
+
+    /**
+     * get the user database from the save file and load it into the current object
+     *
+     * @return this UserDatabase
+     */
+    private synchronized UserDatabase getObjectFromSaveFile() {
+
+        try {
+            FileInputStream fis = new FileInputStream(SAVE_FILE);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            UserDatabase fromSaveFile = null;
+            try {
+                fromSaveFile = (UserDatabase)ois.readObject();
+            } catch (ClassNotFoundException e) {
+                System.out.println("The save file is empty and or has incorrect save data");
+            }
+            if (fromSaveFile == null) {
+                System.out.println("Error! null has been returned");
+                return null;
+            }
+            return fromSaveFile;
+
+
+        } catch (IOException e) {
+            System.out.println("Error reading from the save file");
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     /**
      * Updates the save file with the list of Users
      */
     public synchronized void updateSaveFile() {
         if (SAVE_FILE.exists()) {
+            System.out.println("UserDatabase file was found");
             try (FileOutputStream fos = new FileOutputStream(SAVE_FILE);
                  ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-                oos.writeObject(this);
+
+                 oos.writeObject(this);
+                 System.out.println("objects written sucsess");
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+        else {
+            throw new RuntimeException("SAVE FILE for UserDatabase was not found");
         }
     }
 
@@ -129,6 +173,7 @@ public class UserDatabase implements UserDatabaseInterface {
      * login function to handle a login request from the server
      */
     public User login(String username, String password) {
+
         //check if username exists
         for (int i = 0; i < userDb.size(); i++) {
             if (username.equals(userDb.get(i).getUsername())) {
@@ -182,7 +227,7 @@ public class UserDatabase implements UserDatabaseInterface {
 
 
         User newUser = new User(username, password);
-        userDb.add(newUser);
+        this.addUser(newUser);
         return newUser;
 
 

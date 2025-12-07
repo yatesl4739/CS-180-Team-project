@@ -1,3 +1,5 @@
+import java.io.Serializable;
+
 /**
  * User
  *
@@ -10,7 +12,7 @@
  *
  */
 
-public class User implements UserInterface {
+public class User implements UserInterface, Serializable {
 
     private String username;  // User's username
     private String password;  // User's password
