@@ -230,7 +230,7 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                     System.out.println("READY FOR NEXT OPTION. POSSIBLE NEXT OPTIONS: LOGIN, SIGNUP");
 
 
-                    nextInput = br.readLine();
+                        nextInput = br.readLine();
 
                     //DEBUGGING MESSAGE
                     System.out.println("THE CLIENT SENT BACK: " + nextInput);
@@ -310,6 +310,8 @@ public class reservationServer implements Runnable, ReservationServerInterface {
 
                         //DEBUGGING MESSAGE
                         System.out.println("Server recieved from client: " + nextInput);
+
+
                         if (nextInput.equals("NEW")) {
                             //make a new reservation
 
@@ -345,7 +347,20 @@ public class reservationServer implements Runnable, ReservationServerInterface {
 
                             //-1 to make it an index because the client side will select starting at 1.
                             System.out.println("User is asked to pick an event");
-                            int eventSelect = Integer.parseInt(br.readLine()) - 1;
+
+                            //Add support for cancel button
+                            String rawInput = br.readLine();
+
+                            //debugging print:
+                            System.out.println(rawInput);
+
+                            if (rawInput.equals("********CANCEL********")) {
+                                //cancel button pressed
+                                break;
+                            }
+
+
+                            int eventSelect = Integer.parseInt(rawInput) - 1;
                             System.out.println("User gave back " + eventSelect + " as the selection");
 
                             //give them the seating chart
@@ -370,7 +385,14 @@ public class reservationServer implements Runnable, ReservationServerInterface {
 
                             System.out.println("SERVER SENT OUT SEATING CHART");
 
-                            int numPeople = Integer.parseInt(br.readLine());
+                            //cancel button check
+
+                            rawInput = br.readLine();
+                            if (rawInput.equals("********CANCEL********")) {
+                                //cancel button pressed
+                                break;
+                            }
+                            int numPeople = Integer.parseInt(rawInput);
 
                             long time = Long.parseLong(br.readLine());
 
@@ -383,7 +405,16 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                             //x1,y1,x2,y2,x3,y3
 
                             System.out.println("Server waits for seat input in x1,y1,x2,y2 format");
+
+
+
                             nextInput = br.readLine();
+
+                            if (nextInput.equals("********CANCEL********")) {
+                                //cancel button pressed
+                                break;
+                            }
+
                             System.out.println("Server recieved " + nextInput + "as seat input");
 
 

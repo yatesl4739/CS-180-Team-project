@@ -344,6 +344,8 @@ public class ReservationClient extends JFrame {
                         public void run() {
                             int chosenIndex = showEventSelectionDialog(eventsRaw);
                             if (chosenIndex == -1) {
+                                System.out.println("USER PRESSED CANCEL BUTTON");
+                                pr.println("********CANCEL********");
                                 // user canceled
                                 if (finishedCallback != null) finishedCallback.run();
                                 return;
@@ -366,12 +368,16 @@ public class ReservationClient extends JFrame {
                                                 List<Point> selected = showSeatingChartDialog(chartText);
                                                 if (selected == null || selected.isEmpty()) {
                                                     // user cancelled or didn't pick seats -> finish
+                                                    System.out.println("USER CANCELED AT SEAT SELECTION PART");
+                                                    pr.println("********CANCEL********");
                                                     if (finishedCallback != null) finishedCallback.run();
                                                     return;
                                                 }
                                                 // Show details dialog to get numPeople, time, date
                                                 ReservationDetails details = showDetailsDialog();
                                                 if (details == null) {
+                                                    System.out.println("USER CANCELED AT INFO INPUT PAGE");
+                                                    pr.println("********CANCEL********");
                                                     // canceled
                                                     if (finishedCallback != null) finishedCallback.run();
                                                     return;
