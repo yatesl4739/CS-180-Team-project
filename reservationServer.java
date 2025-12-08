@@ -356,7 +356,8 @@ public class reservationServer implements Runnable, ReservationServerInterface {
 
                             if (rawInput.equals("********CANCEL********")) {
                                 //cancel button pressed
-                                break;
+                                rawInput = "";
+                                continue;
                             }
 
 
@@ -390,7 +391,8 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                             rawInput = br.readLine();
                             if (rawInput.equals("********CANCEL********")) {
                                 //cancel button pressed
-                                break;
+                                rawInput = "";
+                                continue;
                             }
                             int numPeople = Integer.parseInt(rawInput);
 
@@ -412,7 +414,8 @@ public class reservationServer implements Runnable, ReservationServerInterface {
 
                             if (nextInput.equals("********CANCEL********")) {
                                 //cancel button pressed
-                                break;
+                                nextInput = "";
+                                continue;
                             }
 
                             System.out.println("Server recieved " + nextInput + "as seat input");
