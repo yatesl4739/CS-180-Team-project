@@ -12,6 +12,10 @@ That includes databases of Reservations, Events, and Users.
 Each database has IO support and saves data to the ```saveFiles``` directory.
 Each public function of every class is declared in a public interface.
 
+## Submissions
+Presentation -> Leo Zhang
+Project Report -> Meraj Syeda
+
 ### Event - Liam
 
 The Event object contains information that is related to a certain event like the event name, price of event, seating chart, time of day, and total revenue.
