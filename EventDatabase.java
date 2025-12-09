@@ -84,6 +84,16 @@ public class EventDatabase implements Serializable, EventDatabaseInterface {
     }
 
     /**
+     * add reservation
+     */
+
+    public synchronized void createResrvation(int eventNum, int[] x, int[] y, User user, int numPeople, long timeOfReservation, long date) {
+        eventList.get(eventNum)
+                .createReservation(x, y, user, numPeople, timeOfReservation, date);
+        updateSaveFile();
+    }
+
+    /**
      * given an int, the event at that index in eventList will be removed.
      * @param eventNum
      */

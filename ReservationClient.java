@@ -595,7 +595,7 @@ public class ReservationClient extends JFrame {
             return sb.toString();
 
         }
-        sb.append("Reservation: \n");
+        //sb.append("Reservation: \n");
 
         //Read infinate lines
         while (line != null) {
@@ -687,7 +687,7 @@ public class ReservationClient extends JFrame {
             }
             out.add(display);
         }
-        System.out.println(out.getFirst());
+        //System.out.println(out.getFirst());
         return out;
     }
 

@@ -428,17 +428,19 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                             int[] y = new int[xy.length / 2];
 
                             for (int i = 0; i < xy.length; i++) {
+                                int value = Integer.parseInt(xy[i]);
                                 if (i % 2 == 0) {
-                                    x[i / 2] = Integer.parseInt(xy[i]);
-
+                                    // client sends column first, but server expects row first
+                                    y[i / 2] = value;
                                 } else {
-                                    y[i / 2] = Integer.parseInt(xy[i]);
+                                    x[i / 2] = value;
                                 }
                             }
 
                             //create a new reservation
-                            venue1.getEventDatabase().getEvents().get(eventSelect)
-                                    .createReservation(x, y, clientUser, numPeople, time, date);
+                            venue1.getEventDatabase().createResrvation(eventSelect, x, y, clientUser, numPeople, time, date);
+//                            venue1.getEventDatabase().getEvents().get(eventSelect)
+//                                    .createReservation(x, y, clientUser, numPeople, time, date);
 
                             pr.println("Reservation created!!");
                         }
@@ -520,4 +522,3 @@ public class reservationServer implements Runnable, ReservationServerInterface {
         }
     }
 }
-

@@ -1,3 +1,4 @@
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -8,7 +9,7 @@ import java.time.format.DateTimeFormatter;
  * @version 11/10/25
  */
 
-public class Reservation implements ReservationInterface {
+public class Reservation implements ReservationInterface, Serializable {
     private User user;
     private int numPeople;
     private long timeOfReservation;

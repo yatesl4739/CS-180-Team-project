@@ -30,7 +30,7 @@ public class ReservationDatabase implements ReservationDatabaseInterface, Serial
 
     // getter and setter
     public synchronized ArrayList<Reservation> getReservations() {
-        return new ArrayList<>(reservationList);
+        return reservationList;
     }
 
     public synchronized void setReservations(ArrayList<Reservation> listInput) {
