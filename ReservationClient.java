@@ -4,17 +4,11 @@ import java.awt.event.*;
 import java.io.*;
 import java.net.Socket;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-
-// display changes are a different button and don't have an action listener attached to them
-// make it so that they're the same button so that on click it will change color but not the button itself
-// OR attach action listener to the other button that is created as well
-
-// other buttons work if you click them before attempting to make a new reservation
-// but if you try to make a new reservation and then click the other stuff it DOES NOT WORKKKKK
 
 /**
  * ReservationClient
@@ -31,7 +25,8 @@ public class ReservationClient extends JFrame {
 
     private static final String HOST = "localhost";   // host address for server
     private static final int PORT = 4242;             // port number for server
-    private static final DateTimeFormatter EVENT_DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM dd, yyyy");
+    private static final DateTimeFormatter EVENT_DATE_FORMATTER =
+            DateTimeFormatter.ofPattern("MMM dd, yyyy");
 
     private Socket socket;
     private BufferedReader br;
@@ -42,6 +37,15 @@ public class ReservationClient extends JFrame {
     private JTextField loginUserField;
     private JPasswordField loginPassField;
     private JTextArea loginOutputArea;
+
+    // role & buttons
+    private boolean isAdmin = false;
+    private JButton newBtn;
+    private JButton viewBtn;
+    private JButton eventsBtn;
+    private JButton createEventBtn;
+    private JButton logoutBtn;
+    private JButton exitBtn;
 
     public ReservationClient() {
         setTitle("Reservation Client");
@@ -93,7 +97,7 @@ public class ReservationClient extends JFrame {
         form.add(loginPassField);
 
         loginUserField.addActionListener(e -> loginPassField.requestFocusInWindow());
-        
+
         JPanel btnRow = new JPanel();
         JButton loginBtn = new JButton("Login");
         JButton signupBtn = new JButton("Sign Up");
@@ -111,8 +115,6 @@ public class ReservationClient extends JFrame {
         mainPanel.add(loginPanel, "Login");
         cardLayout.show(mainPanel, "Login");
 
-
-
         // login button listener
         loginBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -124,11 +126,10 @@ public class ReservationClient extends JFrame {
                 new Thread(new Runnable() {
                     public void run() {
                         try {
-
-                                pr.println("LOGIN");
-                                pr.println(user);
-                                pr.println(pass);
-                                final String response = br.readLine();
+                            pr.println("LOGIN");
+                            pr.println(user);
+                            pr.println(pass);
+                            final String response = br.readLine();
 
                             SwingUtilities.invokeLater(new Runnable() {
                                 public void run() {
@@ -136,16 +137,18 @@ public class ReservationClient extends JFrame {
                                     loginBtn.setEnabled(true);
 
                                     if (response != null && response.startsWith("Success")) {
+                                        // detect admin from server message
+                                        isAdmin = response.toLowerCase().contains("admin");
                                         showMenu();
-
+                                        updateMenuButtonsForRole();
                                     }
-
                                 }
                             });
                         } catch (IOException e) {
                             SwingUtilities.invokeLater(new Runnable() {
                                 public void run() {
-                                    JOptionPane.showMessageDialog(ReservationClient.this, "Network error during login: " + e.getMessage());
+                                    JOptionPane.showMessageDialog(ReservationClient.this,
+                                            "Network error during login: " + e.getMessage());
                                     loginBtn.setEnabled(true);
                                 }
                             });
@@ -172,14 +175,17 @@ public class ReservationClient extends JFrame {
                                     JOptionPane.showMessageDialog(ReservationClient.this, response);
                                     signupBtn.setEnabled(true);
                                     if (response != null && response.startsWith("Success")) {
+                                        isAdmin = false; // signup always normal user
                                         showMenu();
+                                        updateMenuButtonsForRole();
                                     }
                                 }
                             });
                         } catch (IOException e) {
                             SwingUtilities.invokeLater(new Runnable() {
                                 public void run() {
-                                    JOptionPane.showMessageDialog(ReservationClient.this, "Network error: " + e.getMessage());
+                                    JOptionPane.showMessageDialog(ReservationClient.this,
+                                            "Network error: " + e.getMessage());
                                     signupBtn.setEnabled(true);
                                 }
                             });
@@ -190,31 +196,53 @@ public class ReservationClient extends JFrame {
         });
     }
 
+    private static class AdminEventInfo {
+        String name;
+        double basePrice;
+        long daySinceEpoch;
+        long minutesSinceMidnight;
+        int rows;
+        int cols;
+
+        AdminEventInfo(String n, double p, long d, long m, int r, int c) {
+            name = n;
+            basePrice = p;
+            daySinceEpoch = d;
+            minutesSinceMidnight = m;
+            rows = r;
+            cols = c;
+        }
+    }
+
     private void buildMenuPanel() {
-        JPanel menuPanel = new JPanel(new GridLayout(5, 1, 8 ,8));
-        JButton newBtn = new JButton("New Reservation");
-        JButton viewBtn = new JButton("View Reservations");
-        JButton eventsBtn = new JButton("View Events");
-        JButton logoutBtn = new JButton("Logout");
-        JButton exitBtn = new JButton("Exit");
+        JPanel menuPanel = new JPanel(new GridLayout(6, 1, 8, 8));
+        newBtn = new JButton("New Reservation");
+        viewBtn = new JButton("View Reservations");
+        eventsBtn = new JButton("View Events");
+        createEventBtn = new JButton("Create Event (Admin)");
+        logoutBtn = new JButton("Logout");
+        exitBtn = new JButton("Exit");
 
         menuPanel.add(newBtn);
         menuPanel.add(viewBtn);
         menuPanel.add(eventsBtn);
+        menuPanel.add(createEventBtn);
         menuPanel.add(logoutBtn);
         menuPanel.add(exitBtn);
 
         mainPanel.add(menuPanel, "Menu");
 
+        // default: before login, everything disabled except logout/exit (but user can't see this yet)
+        updateMenuButtonsForRole();
+
         newBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 newBtn.setEnabled(false);
-                System.out.println("Button pressed");
                 startNewReservationFlow(new Runnable() {
-
-                    public void run() {}
+                    public void run() {
+                        newBtn.setEnabled(true);
+                    }
                 });
-                newBtn.setEnabled(true);
             }
         });
 
@@ -228,19 +256,17 @@ public class ReservationClient extends JFrame {
                             final String raw = readReservationPayload();
                             SwingUtilities.invokeLater(new Runnable() {
                                 public void run() {
-                                    if (raw == null || raw.trim().isEmpty()) {
-                                        JOptionPane.showMessageDialog(ReservationClient.this, "No reservations found.");
+                                    if (raw == null || raw.trim().isEmpty()
+                                            || raw.trim().equals("Reservation:")) {
+                                        JOptionPane.showMessageDialog(ReservationClient.this,
+                                                "No reservations found.");
                                     } else {
-                                        String[] arr = raw.split("\\$\\$");
-                                        StringBuilder sb = new StringBuilder();
-                                        for (String r : arr) {
-                                            String trimmed = r.trim();
-                                            if (trimmed.isEmpty()) continue;
-                                            sb.append("- ").append(trimmed).append("\n\n");
-                                        }
-                                        JTextArea ta = new JTextArea(sb.toString());
+                                        JTextArea ta = new JTextArea(raw);
                                         ta.setEditable(false);
-                                        JOptionPane.showMessageDialog(ReservationClient.this, new JScrollPane(ta), "Reservations", JOptionPane.PLAIN_MESSAGE);
+                                        JOptionPane.showMessageDialog(ReservationClient.this,
+                                                new JScrollPane(ta),
+                                                "Reservations",
+                                                JOptionPane.PLAIN_MESSAGE);
                                     }
                                     viewBtn.setEnabled(true);
                                 }
@@ -248,7 +274,8 @@ public class ReservationClient extends JFrame {
                         } catch (IOException ex) {
                             SwingUtilities.invokeLater(new Runnable() {
                                 public void run() {
-                                    JOptionPane.showMessageDialog(ReservationClient.this, "Network error: " + ex.getMessage());
+                                    JOptionPane.showMessageDialog(ReservationClient.this,
+                                            "Network error: " + ex.getMessage());
                                     viewBtn.setEnabled(true);
                                 }
                             });
@@ -271,18 +298,23 @@ public class ReservationClient extends JFrame {
                                     List<String> events = parseEvents(raw);
                                     StringBuilder sb = new StringBuilder();
                                     for (int i = 0; i < events.size(); i++) {
-                                        sb.append((i + 1)).append(") ").append(events.get(i)).append("\n");
+                                        sb.append((i + 1)).append(") ")
+                                                .append(events.get(i)).append("\n");
                                     }
                                     JTextArea ta = new JTextArea(sb.toString());
                                     ta.setEditable(false);
-                                    JOptionPane.showMessageDialog(ReservationClient.this, new JScrollPane(ta), "Events", JOptionPane.PLAIN_MESSAGE);
+                                    JOptionPane.showMessageDialog(ReservationClient.this,
+                                            new JScrollPane(ta),
+                                            "Events",
+                                            JOptionPane.PLAIN_MESSAGE);
                                     eventsBtn.setEnabled(true);
                                 }
                             });
                         } catch (IOException ex) {
                             SwingUtilities.invokeLater(new Runnable() {
                                 public void run() {
-                                    JOptionPane.showMessageDialog(ReservationClient.this, "Network error: " + ex.getMessage());
+                                    JOptionPane.showMessageDialog(ReservationClient.this,
+                                            "Network error: " + ex.getMessage());
                                     eventsBtn.setEnabled(true);
                                 }
                             });
@@ -298,18 +330,11 @@ public class ReservationClient extends JFrame {
                 new Thread(new Runnable() {
                     public void run() {
                         pr.println("LOGOUT");
+                        isAdmin = false;
+
                         SwingUtilities.invokeLater(new Runnable() {
                             public void run() {
-
                                 JOptionPane.showMessageDialog(ReservationClient.this, "Logged out.");
-
-                                try {
-                                    br.readLine();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-
-
                                 cardLayout.show(mainPanel, "Login");
                                 logoutBtn.setEnabled(true);
                             }
@@ -326,13 +351,139 @@ public class ReservationClient extends JFrame {
                         try {
                             pr.println("EXIT");
                             socket.close();
-                        } catch (IOException ignored) {}
+                        } catch (IOException ignored) {
+                        }
                         System.exit(0);
                     }
                 }).start();
             }
         });
 
+        createEventBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                AdminEventInfo info = showCreateEventDialog();
+                if (info == null) {
+                    return; // canceled or invalid
+                }
+
+                createEventBtn.setEnabled(false);
+                new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            pr.println("CREATE_EVENT");
+                            pr.println(info.name);
+                            pr.println(Double.toString(info.basePrice));
+                            pr.println(Long.toString(info.daySinceEpoch));
+                            pr.println(Long.toString(info.minutesSinceMidnight));
+                            pr.println(Integer.toString(info.rows));
+                            pr.println(Integer.toString(info.cols));
+
+                            final String resp = br.readLine();
+                            SwingUtilities.invokeLater(new Runnable() {
+                                public void run() {
+                                    JOptionPane.showMessageDialog(ReservationClient.this,
+                                            resp != null ? resp : "No response from server.");
+                                    createEventBtn.setEnabled(true);
+                                }
+                            });
+                        } catch (IOException ex) {
+                            SwingUtilities.invokeLater(new Runnable() {
+                                public void run() {
+                                    JOptionPane.showMessageDialog(ReservationClient.this,
+                                            "Network error creating event: " + ex.getMessage());
+                                    createEventBtn.setEnabled(true);
+                                }
+                            });
+                        }
+                    }
+                }).start();
+            }
+        });
+    }
+
+    private void updateMenuButtonsForRole() {
+        if (newBtn == null) return; // not built yet
+
+        if (isAdmin) {
+            // admin: only create events
+            newBtn.setEnabled(false);
+            viewBtn.setEnabled(false);
+            eventsBtn.setEnabled(false);
+            createEventBtn.setEnabled(true);
+        } else {
+            // normal user
+            newBtn.setEnabled(true);
+            viewBtn.setEnabled(true);
+            eventsBtn.setEnabled(true);
+            createEventBtn.setEnabled(false);
+        }
+        logoutBtn.setEnabled(true);
+        exitBtn.setEnabled(true);
+    }
+
+    private AdminEventInfo showCreateEventDialog() {
+        JPanel panel = new JPanel(new GridLayout(8, 1, 4, 4));
+
+        panel.add(new JLabel("Event Name:"));
+        JTextField nameField = new JTextField();
+        panel.add(nameField);
+
+        panel.add(new JLabel("Base Price (e.g. 12.50):"));
+        JTextField priceField = new JTextField();
+        panel.add(priceField);
+
+        panel.add(new JLabel("Date (YYYY-MM-DD):"));
+        JTextField dateField = new JTextField();
+        panel.add(dateField);
+
+        panel.add(new JLabel("Time (HH:MM, 24-hour, e.g. 19:30):"));
+        JTextField timeField = new JTextField();
+        panel.add(timeField);
+
+        panel.add(new JLabel("Rows of seats (e.g. 5):"));
+        JTextField rowsField = new JTextField();
+        panel.add(rowsField);
+
+        panel.add(new JLabel("Columns of seats (e.g. 10):"));
+        JTextField colsField = new JTextField();
+        panel.add(colsField);
+
+        int opt = JOptionPane.showConfirmDialog(this, panel, "Create New Event",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (opt != JOptionPane.OK_OPTION) {
+            return null; // user hit cancel/close
+        }
+
+        try {
+            String name = nameField.getText().trim();
+            if (name.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Event name cannot be empty.");
+                return null;
+            }
+
+            double price = Double.parseDouble(priceField.getText().trim());
+
+            String dateStr = dateField.getText().trim();
+            String timeStr = timeField.getText().trim();
+
+            LocalDate date = LocalDate.parse(dateStr); // expects YYYY-MM-DD
+            LocalTime time = LocalTime.parse(timeStr); // expects HH:MM
+
+            long daySinceEpoch = date.toEpochDay(); // days since 1970-01-01
+            long minutesSinceMidnight = time.getHour() * 60L + time.getMinute();
+
+            int rows = Integer.parseInt(rowsField.getText().trim());
+            int cols = Integer.parseInt(colsField.getText().trim());
+            if (rows <= 0 || cols <= 0) {
+                JOptionPane.showMessageDialog(this, "Rows and columns must be positive.");
+                return null;
+            }
+
+            return new AdminEventInfo(name, price, daySinceEpoch, minutesSinceMidnight, rows, cols);
+        } catch (NumberFormatException | DateTimeParseException ex) {
+            JOptionPane.showMessageDialog(this, "Invalid input: " + ex.getMessage());
+            return null;
+        }
     }
 
     private void showMenu() {
@@ -340,10 +491,8 @@ public class ReservationClient extends JFrame {
     }
 
     private void startNewReservationFlow(final Runnable finishedCallback) {
-
         new Thread(new Runnable() {
             public void run() {
-
                 try {
                     pr.println("NEW");
                     final String eventsRaw = br.readLine(); // server sends events string
@@ -353,7 +502,6 @@ public class ReservationClient extends JFrame {
                             if (chosenIndex == -1) {
                                 System.out.println("USER PRESSED CANCEL BUTTON");
                                 pr.println("********CANCEL********");
-                                // user canceled
                                 if (finishedCallback != null) finishedCallback.run();
                                 return;
                             }
@@ -369,48 +517,36 @@ public class ReservationClient extends JFrame {
                                             line = br.readLine();
                                         }
                                         final String chartText = joinLines(chartLines);
-                                        // Show seating chart dialog on EDT and get selected seats
                                         SwingUtilities.invokeLater(new Runnable() {
                                             public void run() {
                                                 List<Point> selected = showSeatingChartDialog(chartText);
                                                 if (selected == null || selected.isEmpty()) {
-                                                    // user cancelled or didn't pick seats -> finish
                                                     System.out.println("USER CANCELED AT SEAT SELECTION PART");
                                                     pr.println("********CANCEL********");
                                                     if (finishedCallback != null) finishedCallback.run();
                                                     return;
                                                 }
-                                                // Show details dialog to get numPeople, time, date
-                                                // ReservationDetails details = showDetailsDialog();
-                                                /*
-                                                if (details == null) {
-                                                    System.out.println("USER CANCELED AT INFO INPUT PAGE");
-                                                    pr.println("********CANCEL********");
-                                                    // canceled
-                                                    if (finishedCallback != null) finishedCallback.run();
-                                                    return;
-                                                }
-                                                */
-                                                // After details entered, send details and seats in background thread
                                                 new Thread(new Runnable() {
                                                     public void run() {
                                                         try {
-                                                            pr.println(selected.size());
-                                                            pr.println(chosenIndex);
-                                                            String seatStr = buildSeatString(selected); // "x1,y1,x2,y2"
+                                                            pr.println(selected.size()); // numPeople
+                                                            pr.println(chosenIndex);     // event index (0-based)
+                                                            String seatStr = buildSeatString(selected);
                                                             pr.println(seatStr);
                                                             final String finalResp = br.readLine();
                                                             SwingUtilities.invokeLater(new Runnable() {
                                                                 public void run() {
-                                                                    JOptionPane.showMessageDialog(ReservationClient.this,
-                                                                             finalResp);
+                                                                    JOptionPane.showMessageDialog(
+                                                                            ReservationClient.this,
+                                                                            "Server response: " + finalResp);
                                                                     if (finishedCallback != null) finishedCallback.run();
                                                                 }
                                                             });
                                                         } catch (IOException e) {
                                                             SwingUtilities.invokeLater(new Runnable() {
                                                                 public void run() {
-                                                                    JOptionPane.showMessageDialog(ReservationClient.this,
+                                                                    JOptionPane.showMessageDialog(
+                                                                            ReservationClient.this,
                                                                             "Network error sending reservation: " + e.getMessage());
                                                                     if (finishedCallback != null) finishedCallback.run();
                                                                 }
@@ -423,7 +559,8 @@ public class ReservationClient extends JFrame {
                                     } catch (IOException e) {
                                         SwingUtilities.invokeLater(new Runnable() {
                                             public void run() {
-                                                JOptionPane.showMessageDialog(ReservationClient.this, "Network error reading chart: " + e.getMessage());
+                                                JOptionPane.showMessageDialog(ReservationClient.this,
+                                                        "Network error reading chart: " + e.getMessage());
                                                 if (finishedCallback != null) finishedCallback.run();
                                             }
                                         });
@@ -435,7 +572,8 @@ public class ReservationClient extends JFrame {
                 } catch (IOException e) {
                     SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
-                            JOptionPane.showMessageDialog(ReservationClient.this, "Network error: " + e.getMessage());
+                            JOptionPane.showMessageDialog(ReservationClient.this,
+                                    "Network error: " + e.getMessage());
                             if (finishedCallback != null) finishedCallback.run();
                         }
                     });
@@ -454,12 +592,13 @@ public class ReservationClient extends JFrame {
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane sp = new JScrollPane(list);
         sp.setPreferredSize(new Dimension(400, 200));
-        int option = JOptionPane.showConfirmDialog(this, sp, "Select Event", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        int option = JOptionPane.showConfirmDialog(this, sp, "Select Event",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (option != JOptionPane.OK_OPTION) return -1;
         int sel = list.getSelectedIndex();
         if (sel < 0) {
             JOptionPane.showMessageDialog(this, "Please select an event.");
-            return showEventSelectionDialog(eventsRaw); // ask again
+            return showEventSelectionDialog(eventsRaw);
         }
         return sel;
     }
@@ -501,7 +640,6 @@ public class ReservationClient extends JFrame {
                 } else {
                     btn.setText("o");
                 }
-                // store coords in action command "c,r"
                 btn.setActionCommand(c + "," + r);
                 toggleList.add(btn);
                 grid.add(btn);
@@ -510,7 +648,10 @@ public class ReservationClient extends JFrame {
 
         JScrollPane sp = new JScrollPane(grid);
         sp.setPreferredSize(new Dimension(400, 300));
-        int option = JOptionPane.showConfirmDialog(this, sp, "Select Seats (click to toggle)", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        int option = JOptionPane.showConfirmDialog(this, sp,
+                "Select Seats (click to toggle)",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE);
         if (option != JOptionPane.OK_OPTION) return null;
         List<Point> selected = new ArrayList<Point>();
         for (JToggleButton tb : toggleList) {
@@ -522,7 +663,9 @@ public class ReservationClient extends JFrame {
             }
         }
         if (selected.isEmpty()) {
-            int retry = JOptionPane.showConfirmDialog(this, "No seats selected. Cancel or try again?", "No seats", JOptionPane.YES_NO_OPTION);
+            int retry = JOptionPane.showConfirmDialog(this,
+                    "No seats selected. Cancel or try again?",
+                    "No seats", JOptionPane.YES_NO_OPTION);
             if (retry == JOptionPane.NO_OPTION) {
                 return showSeatingChartDialog(chartText);
             } else {
@@ -532,34 +675,15 @@ public class ReservationClient extends JFrame {
         return selected;
     }
 
-    private ReservationDetails showDetailsDialog() {
-        JPanel panel = new JPanel(new GridLayout(6, 1, 4, 4));
-        panel.add(new JLabel("Number of people (integer):"));
-        final JTextField numPeopleField = new JTextField();
-        panel.add(numPeopleField);
+    private static class ReservationDetails {
+        int numPeople;
+        String timeStr;
+        String dateStr;
 
-        panel.add(new JLabel("Time (human readable, e.g. 6:00 PM):"));
-        final JTextField timeField = new JTextField();
-        panel.add(timeField);
-
-        panel.add(new JLabel("Date (human readable, e.g. 2025-12-20):"));
-        final JTextField dateField = new JTextField();
-        panel.add(dateField);
-
-        int option = JOptionPane.showConfirmDialog(this, panel, "Reservation Details", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-        if (option != JOptionPane.OK_OPTION) return null;
-        try {
-            int num = Integer.parseInt(numPeopleField.getText().trim());
-            String t = timeField.getText().trim();
-            String d = dateField.getText().trim();
-            if (t.isEmpty() || d.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Time and date cannot be empty.");
-                return showDetailsDialog();
-            }
-            return new ReservationDetails(num, t, d);
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Number of people must be an integer.");
-            return showDetailsDialog();
+        ReservationDetails(int n, String t, String d) {
+            numPeople = n;
+            timeStr = t;
+            dateStr = d;
         }
     }
 
@@ -587,20 +711,11 @@ public class ReservationClient extends JFrame {
     private String readReservationPayload() throws IOException {
         StringBuilder sb = new StringBuilder();
         String line = br.readLine();
-
-        boolean firstLine = true;
-        if (line.isEmpty() && firstLine) {
-            //error nothing returned
-            br.readLine();
-            return sb.toString();
-
-        }
         sb.append("Reservation: \n");
+        boolean firstLine = true;
 
-        //Read infinate lines
         while (line != null) {
             if (line.isEmpty() && firstLine) {
-                //error nothing returned
                 break;
             }
             if (line.equals("END_OF_USER_EVENT_DETAILS**")) {
@@ -612,7 +727,6 @@ public class ReservationClient extends JFrame {
             }
             firstLine = false;
             sb.append(line);
-
 
             line = br.readLine();
         }
@@ -648,54 +762,27 @@ public class ReservationClient extends JFrame {
                     LocalDate localDate = LocalDate.ofEpochDay(epochDay);
                     display += " on " + localDate.format(EVENT_DATE_FORMATTER);
                 } catch (NumberFormatException ex) {
-                   // if there is an error with epoch show just the # idk
                     display += " on " + day;
                 }
             }
 
             if (!time.isEmpty()) {
+                int timeInt = Integer.parseInt(time); // e.g. 1830
+                int hour24 = timeInt / 100;
+                int minute = timeInt % 100;
 
-                //TODO: format times
+                String typeOfTime = (hour24 >= 12) ? "pm" : "am";
+                int hour12 = hour24 % 12;
+                if (hour12 == 0) hour12 = 12;
 
-                int timeHour = (Integer.parseInt(time) / 100);
-
-                String typeOfTime = "am";
-
-                if (timeHour > 12)
-                    typeOfTime = "pm";
-
-                timeHour = timeHour % 12;
-
-                display += " at " + timeHour + ":";
-
-                int timeInMinutes = 00;
-
-                if (typeOfTime.equals("pm")) {
-
-                    timeInMinutes = Integer.parseInt(time) - (Integer.parseInt(time) / 100 * 100);
-
-                }
-                else if (typeOfTime.equals("am")) {
-
-                    timeInMinutes =  Integer.parseInt(time) - (timeHour * 100);
-                }
-
-                display += String.format("%02d", timeInMinutes) + typeOfTime;
-
-
-
+                display += " at " + hour12 + ":" + String.format("%02d", minute) + typeOfTime;
             }
             out.add(display);
         }
-        System.out.println(out.getFirst());
+        if (!out.isEmpty()) {
+            System.out.println(out.get(0));
+        }
         return out;
-    }
-
-    private static class ReservationDetails {
-        int numPeople;
-        String timeStr;
-        String dateStr;
-        ReservationDetails(int n, String t, String d) { numPeople = n; timeStr = t; dateStr = d; }
     }
 
     public static void main(String[] args) {
@@ -711,7 +798,5 @@ public class ReservationClient extends JFrame {
         });
 
     }
-
-
 
 }
