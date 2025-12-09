@@ -20,7 +20,7 @@ import java.util.Scanner;
 
 /**
  * ReservationClient
- *
+ * <p>
  * This program allows a client to connect to the reservationServer
  * to log in, sign up, create new reservations, and view existing
  * reservations.
@@ -105,7 +105,7 @@ public class ReservationClient extends JFrame {
         form.add(loginPassField);
 
         loginUserField.addActionListener(e -> loginPassField.requestFocusInWindow());
-        
+
         JPanel btnRow = new JPanel();
         JButton loginBtn = new JButton("Login");
         JButton signupBtn = new JButton("Sign Up");
@@ -122,7 +122,6 @@ public class ReservationClient extends JFrame {
 
         mainPanel.add(loginPanel, "Login");
         cardLayout.show(mainPanel, "Login");
-
 
 
         // login button listener
@@ -578,8 +577,9 @@ public class ReservationClient extends JFrame {
                                                             SwingUtilities.invokeLater(new Runnable() {
                                                                 public void run() {
                                                                     JOptionPane.showMessageDialog(ReservationClient.this,
-                                                                             finalResp);
-                                                                    if (finishedCallback != null) finishedCallback.run();
+                                                                            finalResp);
+                                                                    if (finishedCallback != null)
+                                                                        finishedCallback.run();
                                                                 }
                                                             });
                                                         } catch (IOException e) {
@@ -588,7 +588,8 @@ public class ReservationClient extends JFrame {
                                                                     JOptionPane.showMessageDialog(
                                                                             ReservationClient.this,
                                                                             "Network error sending reservation: " + e.getMessage());
-                                                                    if (finishedCallback != null) finishedCallback.run();
+                                                                    if (finishedCallback != null)
+                                                                        finishedCallback.run();
                                                                 }
                                                             });
                                                         }
@@ -746,6 +747,7 @@ public class ReservationClient extends JFrame {
 
     /**
      * Function that takes the event data string from the server and parses it to be displayed
+     *
      * @return String to be displayed
      * @throws IOException
      */
@@ -813,7 +815,7 @@ public class ReservationClient extends JFrame {
                     LocalDate localDate = LocalDate.ofEpochDay(epochDay);
                     display += " on " + localDate.format(EVENT_DATE_FORMATTER);
                 } catch (NumberFormatException ex) {
-                   // if there is an error with epoch show just the # idk
+                    // if there is an error with epoch show just the # idk
                     display += " on " + day;
                 }
             }
@@ -837,7 +839,6 @@ public class ReservationClient extends JFrame {
     }
 
 
-
     public static void main(String[] args) {
 
         // calls the main method of reservationServer so that you don't have to individually run server and client each time
@@ -851,7 +852,6 @@ public class ReservationClient extends JFrame {
         });
 
     }
-
 
 
 }

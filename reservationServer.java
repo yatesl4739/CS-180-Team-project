@@ -6,16 +6,14 @@ import java.util.concurrent.*;
 
 /**
  * reservationServer
- *
+ * <p>
  * This program receives input from ReservationClient
  * and makes changes to the venue. A user is able
  * to login, create an account, logout, and make
  * or view reservations.
  *
  * @author Liam Yates, Leo Zhang, Chelsea Zhao, lab sec L12
- *
  * @version November 24, 2025
- *
  */
 
 public class reservationServer implements Runnable, ReservationServerInterface {
@@ -188,56 +186,55 @@ public class reservationServer implements Runnable, ReservationServerInterface {
 
                 //single hashtag represents the start of the string
                 while (true) {
-                {
+                    {
 
 
-
-                    String returnEvents = "#";
-                    ArrayList<Event> eventDB = venue1.getEventDatabase().getEvents();
-                    for (int i = 0; i < eventDB.size(); i++) {
-                        if (i == eventDB.size() - 1) {
-                            //$$ represents seperator between event names
-                            //%% is seperator between day and event name,
-                            // and @@ is seperator between day and time
-                            returnEvents += eventDB.get(i).getEventName() + "%%";
-                            returnEvents += eventDB.get(i).getDay() + "@@";
-                            returnEvents += eventDB.get(i).getTimeOfDay();
-                        } else {
-                            returnEvents += eventDB.get(i).getEventName() + "%%";
-                            returnEvents += eventDB.get(i).getDay() + "@@";
-                            returnEvents += eventDB.get(i).getTimeOfDay() + "$$";
+                        String returnEvents = "#";
+                        ArrayList<Event> eventDB = venue1.getEventDatabase().getEvents();
+                        for (int i = 0; i < eventDB.size(); i++) {
+                            if (i == eventDB.size() - 1) {
+                                //$$ represents seperator between event names
+                                //%% is seperator between day and event name,
+                                // and @@ is seperator between day and time
+                                returnEvents += eventDB.get(i).getEventName() + "%%";
+                                returnEvents += eventDB.get(i).getDay() + "@@";
+                                returnEvents += eventDB.get(i).getTimeOfDay();
+                            } else {
+                                returnEvents += eventDB.get(i).getEventName() + "%%";
+                                returnEvents += eventDB.get(i).getDay() + "@@";
+                                returnEvents += eventDB.get(i).getTimeOfDay() + "$$";
+                            }
                         }
+                        //another hashtag added at the end of the string
+                        returnEvents += "#";
+
+                        //DEBUGGING MESSAGE
+                        System.out.println("THE SERVER IS SENDING THIS OUT: " + returnEvents);
+
+                        pr.println(returnEvents);
+
+                        //DEBUGGING MESSAGE
+                        System.out.println("EVENT INFO GIVEN OUT BY SERVER");
+
                     }
-                    //another hashtag added at the end of the string
-                    returnEvents += "#";
 
-                    //DEBUGGING MESSAGE
-                    System.out.println("THE SERVER IS SENDING THIS OUT: " + returnEvents);
+                    //client would see something like options to do:
+                    //login, sign up
 
-                    pr.println(returnEvents);
+                    String nextInput;
 
-                    //DEBUGGING MESSAGE
-                    System.out.println("EVENT INFO GIVEN OUT BY SERVER");
-
-                }
-
-                //client would see something like options to do:
-                //login, sign up
-
-                String nextInput;
-
-                do {
-                    //DEBUGGING MESSAGE
-                    System.out.println("READY FOR NEXT OPTION. POSSIBLE NEXT OPTIONS: LOGIN, SIGNUP");
+                    do {
+                        //DEBUGGING MESSAGE
+                        System.out.println("READY FOR NEXT OPTION. POSSIBLE NEXT OPTIONS: LOGIN, SIGNUP");
 
 
                         nextInput = br.readLine();
 
-                    //DEBUGGING MESSAGE
-                    System.out.println("THE CLIENT SENT BACK: " + nextInput);
+                        //DEBUGGING MESSAGE
+                        System.out.println("THE CLIENT SENT BACK: " + nextInput);
 
-                    //login:
-                    if (nextInput.equals("LOGIN")) {
+                        //login:
+                        if (nextInput.equals("LOGIN")) {
 
                             String username = br.readLine();
 
@@ -262,8 +259,8 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                             System.out.println("THE SERVER SENT BACK LOGIN STATUS TO CLIENT");
 
 
-                        //SIGNUP
-                    } else if (nextInput.equals("SIGNUP")) {
+                            //SIGNUP
+                        } else if (nextInput.equals("SIGNUP")) {
 
                             String username = br.readLine();
                             //DEBUGGING MESSAGE
@@ -289,19 +286,19 @@ public class reservationServer implements Runnable, ReservationServerInterface {
 
                                 loggedIn = true;
                             }
-                        System.out.println("THE SERVER SENT BACK SIGNUP STATUS TO CLIENT");
+                            System.out.println("THE SERVER SENT BACK SIGNUP STATUS TO CLIENT");
 
-                    }
-                } while (!loggedIn);
+                        }
+                    } while (!loggedIn);
 
 
-                //DEBUGGING MESSAGE
-                System.out.println("Next possible server inputs: NEW to make a new reservation, VIEW to see all reservations for that user, EVENTS to see all events");
+                    //DEBUGGING MESSAGE
+                    System.out.println("Next possible server inputs: NEW to make a new reservation, VIEW to see all reservations for that user, EVENTS to see all events");
 
-                //move onto next possible selection
-                //make reservation, see users current reservations, see events, change password maybe
+                    //move onto next possible selection
+                    //make reservation, see users current reservations, see events, change password maybe
 
-                System.out.println("Checking to see if user is logged in");
+                    System.out.println("Checking to see if user is logged in");
 
                     while (loggedIn) {
                         System.out.println("Starting option loop. User logged in");
@@ -344,7 +341,7 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                             returnEvents += "#";
 
                             pr.println(returnEvents);
-                            System.out.println("THE SERVER SENT OUT EVENT LIST"  + returnEvents);
+                            System.out.println("THE SERVER SENT OUT EVENT LIST" + returnEvents);
 
                             //-1 to make it an index because the client side will select starting at 1.
                             System.out.println("User is asked to pick an event");
@@ -410,7 +407,6 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                             //x1,y1,x2,y2,x3,y3
 
                             System.out.println("Server waits for seat input in x1,y1,x2,y2 format");
-
 
 
                             nextInput = br.readLine();
@@ -503,7 +499,7 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                             returnEvents += "#";
 
                             pr.println(returnEvents);
-                            System.out.println("THE SERVER SENT OUT EVENT LIST"  + returnEvents);
+                            System.out.println("THE SERVER SENT OUT EVENT LIST" + returnEvents);
                         } else if (nextInput.equals("LOGOUT")) {
 
                             loggedIn = false;
@@ -521,7 +517,8 @@ public class reservationServer implements Runnable, ReservationServerInterface {
             } finally {
                 try {
                     socket.close();
-                } catch (IOException ignored) {}
+                } catch (IOException ignored) {
+                }
 
 
             }
