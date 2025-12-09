@@ -225,7 +225,7 @@ public class ReservationClient extends JFrame {
                     public void run() {
                         try {
                             pr.println("VIEW");
-                            final String raw = br.readLine();
+                            final String raw = readReservationPayload();
                             SwingUtilities.invokeLater(new Runnable() {
                                 public void run() {
                                     if (raw == null || raw.trim().isEmpty()) {
@@ -233,7 +233,11 @@ public class ReservationClient extends JFrame {
                                     } else {
                                         String[] arr = raw.split("\\$\\$");
                                         StringBuilder sb = new StringBuilder();
-                                        for (String r : arr) sb.append("- ").append(r).append("\n\n");
+                                        for (String r : arr) {
+                                            String trimmed = r.trim();
+                                            if (trimmed.isEmpty()) continue;
+                                            sb.append("- ").append(trimmed).append("\n\n");
+                                        }
                                         JTextArea ta = new JTextArea(sb.toString());
                                         ta.setEditable(false);
                                         JOptionPane.showMessageDialog(ReservationClient.this, new JScrollPane(ta), "Reservations", JOptionPane.PLAIN_MESSAGE);
@@ -571,6 +575,39 @@ public class ReservationClient extends JFrame {
     private static String joinLines(List<String> lines) {
         StringBuilder sb = new StringBuilder();
         for (String s : lines) sb.append(s).append("\n");
+        return sb.toString();
+    }
+
+    /**
+     * Function that takes the event data string from the server and parses it to be displayed
+     * @return String to be displayed
+     * @throws IOException
+     */
+    private String readReservationPayload() throws IOException {
+        StringBuilder sb = new StringBuilder();
+        String line = br.readLine();
+        sb.append("Reservation: \n");
+        boolean firstLine = true;
+
+        //Read infinate lines
+        while (line != null) {
+            if (line.isEmpty() && firstLine) {
+                //error nothing returned
+                break;
+            }
+            if (line.equals("END_OF_USER_EVENT_DETAILS**")) {
+                break;
+            }
+
+            if (!firstLine) {
+                sb.append("\n");
+            }
+            firstLine = false;
+            sb.append(line);
+
+
+            line = br.readLine();
+        }
         return sb.toString();
     }
 

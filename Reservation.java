@@ -155,7 +155,7 @@ public class Reservation implements ReservationInterface{
 
     @Override
     public String toString() {
-        return "Reservation: \n User: " + user + "\n Time Of Reservation: " + timeOfReservation +
+        return "Reservation: \n User: " + user.getUsername() + "\n Time Of Reservation: " + timeOfReservation +
                 "\n Date: " + date + "\n Price: " + price;
     }
 

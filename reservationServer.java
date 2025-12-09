@@ -461,15 +461,17 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                             for (int i = 0; i < userReservations.size(); i++) {
                                 //$$ marks the space between reservation strings
                                 if (i < userReservations.size() - 1) {
-                                    returnString += userReservations.get(i).toString();
+                                    returnString += userReservations.get(i).toString() + "$$";
                                 } else {
                                     //no $$ on this one beacuse its the last entry
-                                    returnString += userReservations.get(i).toString() + "$$";
+                                    returnString += userReservations.get(i).toString();
                                 }
 
                             }
 
+                            System.out.println(returnString);
                             pr.println(returnString);
+                            pr.println("END_OF_USER_EVENT_DETAILS**");
 
                             System.out.println("SERVER SENT OUT SER RESERVATIONS");
 
