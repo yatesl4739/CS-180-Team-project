@@ -587,8 +587,15 @@ public class ReservationClient extends JFrame {
     private String readReservationPayload() throws IOException {
         StringBuilder sb = new StringBuilder();
         String line = br.readLine();
-        sb.append("Reservation: \n");
+
         boolean firstLine = true;
+        if (line.isEmpty() && firstLine) {
+            //error nothing returned
+            br.readLine();
+            return sb.toString();
+
+        }
+        sb.append("Reservation: \n");
 
         //Read infinate lines
         while (line != null) {

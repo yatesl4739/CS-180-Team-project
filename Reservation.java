@@ -1,12 +1,14 @@
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 /**
  * Reservation
  *
  * @author Meraj Syeda
- *
  * @version 11/10/25
  */
 
-public class Reservation implements ReservationInterface{
+public class Reservation implements ReservationInterface {
     private User user;
     private int numPeople;
     private long timeOfReservation;
@@ -16,15 +18,17 @@ public class Reservation implements ReservationInterface{
     private int[] reservedX;
     private int[] reservedY;
     private Event event;
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM dd, yyyy");
 
     /**
      * constructor of object
+     *
      * @param user
      * @param numPeople
      * @param timeOfReservation
      * @param date
      * @param price
-     * @param x 
+     * @param x
      * @param y
      */
     public Reservation(Event event, User user, int numPeople, long timeOfReservation, long date,
@@ -43,7 +47,7 @@ public class Reservation implements ReservationInterface{
         //setup the reservedseats 2D array
         if (x.length == y.length) {
             this.reservedSeats = new int[2][x.length];
-            for (int i = 0; i < x.length; i ++) {
+            for (int i = 0; i < x.length; i++) {
                 //this sets up the reserved seats 2d array so each array in the 1d array
                 // represents x and y cords where the first array is x cords
                 // the second array (index 1) is the y values of each seat.
@@ -56,7 +60,6 @@ public class Reservation implements ReservationInterface{
     }
 
     //should i add an empty constructor here...?
-
 
 
     //getters
@@ -97,7 +100,6 @@ public class Reservation implements ReservationInterface{
     }
 
 
-
     //setters
     public void setUser(User user) {
         this.user = user;
@@ -123,11 +125,11 @@ public class Reservation implements ReservationInterface{
         this.reservedSeats = reservedSeats;
     }
 
-    public void setReservedSeats(int[] x, int[] y ) {
+    public void setReservedSeats(int[] x, int[] y) {
 
         this.reservedSeats = new int[2][x.length];
 
-        for (int i = 0; i < x.length; i ++ ) {
+        for (int i = 0; i < x.length; i++) {
             reservedSeats[0][i] = x[i];
             reservedSeats[1][i] = y[i];
         }
@@ -139,7 +141,7 @@ public class Reservation implements ReservationInterface{
 
         this.reservedSeats = new int[2][x.length];
 
-        for (int i = 0; i < x.length; i ++ ) {
+        for (int i = 0; i < x.length; i++) {
             reservedSeats[0][i] = x[i];
             reservedSeats[1][i] = y[i];
         }
@@ -153,10 +155,50 @@ public class Reservation implements ReservationInterface{
         this.event = e1;
     }
 
+
+    private String dateFormat(long daysSinceEpoch) {
+        try {
+            return LocalDate.ofEpochDay(daysSinceEpoch).format(DATE_FORMATTER);
+        } catch (Exception e) {
+            //if theres any errors just give back the straight up "days since epoch"
+            String returnString = "" + daysSinceEpoch;
+            return returnString;
+        }
+    }
+
+    private String timeFormat(long rawTime) {
+        try {
+            int time = (int) rawTime;
+            int hourOfTime = time / 100;
+            int minuteOfTimr = time % 100;
+
+            String morning = "AM";
+            if (hourOfTime > 12) {
+                //time is in afternoon:
+                morning = "PM";
+            }
+
+
+            hourOfTime = hourOfTime % 12;
+
+            if (hourOfTime == 0) {
+                //if its midnight im the morning it should display 12
+                hourOfTime = 12;
+            }
+
+            return String.format("%d:%02d %s", hourOfTime, minuteOfTimr, morning);
+        } catch (Exception e) {
+            //any issues?
+            String outputString = "" + rawTime;
+            return outputString;
+        }
+
+    }
+
     @Override
     public String toString() {
-        return "Reservation: \n User: " + user.getUsername() + "\n Time Of Reservation: " + timeOfReservation +
-                "\n Date: " + date + "\n Price: " + price;
+        return "Reservation: \n User: " + user.getUsername() + "\n Time Of Reservation: " + timeFormat(timeOfReservation) +
+                "\n Date: " + dateFormat(date) + "\n Price: " + price;
     }
 
 }
