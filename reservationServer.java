@@ -522,10 +522,7 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                     socket.close();
                 } catch (IOException ignored) {}
 
-                synchronized (clients) {
-                    clients.remove(socket);
-                }
-                System.out.println("Client disconnected. Active clients: " + getClientCount());
+
             }
         }
     }
