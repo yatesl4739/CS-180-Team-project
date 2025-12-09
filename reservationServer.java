@@ -150,6 +150,7 @@ public class reservationServer implements Runnable, ReservationServerInterface {
         private Socket socket;  // socket used to connect server and client
         private User clientUser;  // User object of the current client
         private boolean loggedIn;  // boolean value if the client has logged in
+        private boolean isAdmin;  // boolean value if the client is logged in as admin
 
         /**
          * Sets client's socket to a given socket
@@ -290,6 +291,28 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                             }
                         System.out.println("THE SERVER SENT BACK SIGNUP STATUS TO CLIENT");
 
+                    } else if (nextInput.equals("ADMIN_LOGIN")) {
+                        // Admin login with hardcoded credentials
+                        String username = br.readLine();
+                        
+                        //DEBUGGING MESSAGE
+                        System.out.println("Admin login attempt with username: " + username);
+                        
+                        String password = br.readLine();
+                        
+                        //DEBUGGING MESSAGE
+                        System.out.println("Admin password received");
+                        
+                        // Check hardcoded admin credentials
+                        if (username.equals("admin") && password.equals("admin123")) {
+                            pr.println("Success: Admin login successful");
+                            isAdmin = true;
+                            loggedIn = true;
+                            System.out.println("ADMIN LOGIN SUCCESSFUL");
+                        } else {
+                            pr.println("Error: Invalid admin credentials");
+                            System.out.println("ADMIN LOGIN FAILED");
+                        }
                     }
                 } while (!loggedIn);
 
@@ -447,14 +470,30 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                         else if (nextInput.equals("VIEW")) {
                             ArrayList<Reservation> userReservations = new ArrayList<Reservation>();
 
-                            for (int i = 0; i < venue1.getEventDatabase().getEvents().size(); i++) {
-                                ArrayList<Reservation> resDBTemp = venue1.getEventDatabase().
-                                        getEvents().get(i).getReservationDB().getReservations();
-                                for (int j = 0; j < resDBTemp.size(); j++) {
-                                    if (resDBTemp.get(j).getUser().getUsername().equals(clientUser.getUsername())) {
-                                        userReservations.add(resDBTemp.get(j));
+                            try {
+                                for (int i = 0; i < venue1.getEventDatabase().getEvents().size(); i++) {
+                                    Event currentEvent = venue1.getEventDatabase().getEvents().get(i);
+                                    if (currentEvent == null || currentEvent.getReservationDB() == null) {
+                                        System.out.println("Warning: Event at index " + i + " or its reservationDB is null");
+                                        continue;
+                                    }
+                                    ArrayList<Reservation> resDBTemp = currentEvent.getReservationDB().getReservations();
+                                    if (resDBTemp == null) {
+                                        System.out.println("Warning: Reservations list is null for event " + i);
+                                        continue;
+                                    }
+                                    for (int j = 0; j < resDBTemp.size(); j++) {
+                                        Reservation res = resDBTemp.get(j);
+                                        if (res != null && res.getUser() != null && 
+                                            res.getUser().getUsername() != null &&
+                                            res.getUser().getUsername().equals(clientUser.getUsername())) {
+                                            userReservations.add(res);
+                                        }
                                     }
                                 }
+                            } catch (Exception e) {
+                                System.out.println("Error collecting reservations: " + e.getMessage());
+                                e.printStackTrace();
                             }
 
 
@@ -462,11 +501,16 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                             String returnString = "";
                             for (int i = 0; i < userReservations.size(); i++) {
                                 //$$ marks the space between reservation strings
-                                if (i < userReservations.size() - 1) {
-                                    returnString += userReservations.get(i).toString() + "$$";
-                                } else {
-                                    //no $$ on this one beacuse its the last entry
-                                    returnString += userReservations.get(i).toString();
+                                try {
+                                    if (i < userReservations.size() - 1) {
+                                        returnString += userReservations.get(i).toString() + "$$";
+                                    } else {
+                                        //no $$ on this one beacuse its the last entry
+                                        returnString += userReservations.get(i).toString();
+                                    }
+                                } catch (Exception e) {
+                                    System.out.println("Error converting reservation to string: " + e.getMessage());
+                                    e.printStackTrace();
                                 }
 
                             }
@@ -506,6 +550,109 @@ public class reservationServer implements Runnable, ReservationServerInterface {
 
                             loggedIn = false;
                             System.out.println("USER HAS SELECTED LOGOUT. THE LOGGEDIN BOOLEAN IS NOW" + loggedIn);
+                        } else if (nextInput.equals("ADMIN_REFRESH")) {
+                            // Admin refresh events list
+                            if (!isAdmin) {
+                                pr.println("Error: Not authorized");
+                                continue;
+                            }
+                            
+                            System.out.println("ADMIN REFRESH COMMAND RECEIVED");
+                            
+                            String returnEvents = "#";
+                            ArrayList<Event> eventDB = venue1.getEventDatabase().getEvents();
+                            for (int i = 0; i < eventDB.size(); i++) {
+                                if (i == eventDB.size() - 1) {
+                                    returnEvents += eventDB.get(i).getEventName() + "%%";
+                                    returnEvents += eventDB.get(i).getDay() + "@@";
+                                    returnEvents += eventDB.get(i).getTimeOfDay();
+                                } else {
+                                    returnEvents += eventDB.get(i).getEventName() + "%%";
+                                    returnEvents += eventDB.get(i).getDay() + "@@";
+                                    returnEvents += eventDB.get(i).getTimeOfDay() + "$$";
+                                }
+                            }
+                            returnEvents += "#";
+                            
+                            pr.println(returnEvents);
+                            System.out.println("ADMIN REFRESH: Event list sent");
+                        } else if (nextInput.equals("ADMIN_ADD")) {
+                            // Admin add new event
+                            if (!isAdmin) {
+                                pr.println("Error: Not authorized");
+                                continue;
+                            }
+                            
+                            System.out.println("ADMIN ADD COMMAND RECEIVED");
+                            
+                            try {
+                                String eventName = br.readLine();
+                                double price = Double.parseDouble(br.readLine());
+                                long day = Long.parseLong(br.readLine());
+                                long time = Long.parseLong(br.readLine());
+                                int rows = Integer.parseInt(br.readLine());
+                                int cols = Integer.parseInt(br.readLine());
+                                
+                                System.out.println("Creating event: " + eventName + ", price: " + price + 
+                                                   ", day: " + day + ", time: " + time + 
+                                                   ", rows: " + rows + ", cols: " + cols);
+                                
+                                // Create seating chart filled with 'o' (all available)
+                                char[][] seatingChart = new char[rows][cols];
+                                for (int i = 0; i < rows; i++) {
+                                    for (int j = 0; j < cols; j++) {
+                                        seatingChart[i][j] = 'o';
+                                    }
+                                }
+                                
+                                // Create and add new event
+                                Event newEvent = new Event(eventName, price, seatingChart, time, day);
+                                venue1.getEventDatabase().addEvent(newEvent);
+                                
+                                pr.println("Success: Event '" + eventName + "' added successfully");
+                                System.out.println("ADMIN ADD: Event added successfully");
+                            } catch (NumberFormatException e) {
+                                pr.println("Error: Invalid number format - " + e.getMessage());
+                                System.out.println("ADMIN ADD: Failed - invalid number format");
+                            } catch (Exception e) {
+                                pr.println("Error: Failed to add event - " + e.getMessage());
+                                System.out.println("ADMIN ADD: Failed - " + e.getMessage());
+                            }
+                        } else if (nextInput.equals("ADMIN_DELETE")) {
+                            // Admin delete event
+                            if (!isAdmin) {
+                                pr.println("Error: Not authorized");
+                                continue;
+                            }
+                            
+                            System.out.println("ADMIN DELETE COMMAND RECEIVED");
+                            
+                            try {
+                                int index = Integer.parseInt(br.readLine());
+                                ArrayList<Event> eventDB = venue1.getEventDatabase().getEvents();
+                                
+                                if (index < 0 || index >= eventDB.size()) {
+                                    pr.println("Error: Invalid event index. Must be between 0 and " + (eventDB.size() - 1));
+                                    System.out.println("ADMIN DELETE: Failed - invalid index");
+                                } else {
+                                    String eventName = eventDB.get(index).getEventName();
+                                    venue1.getEventDatabase().rmEvent(index);
+                                    pr.println("Success: Event '" + eventName + "' deleted successfully");
+                                    System.out.println("ADMIN DELETE: Event at index " + index + " deleted");
+                                }
+                            } catch (NumberFormatException e) {
+                                pr.println("Error: Invalid index format");
+                                System.out.println("ADMIN DELETE: Failed - invalid index format");
+                            } catch (Exception e) {
+                                pr.println("Error: Failed to delete event - " + e.getMessage());
+                                System.out.println("ADMIN DELETE: Failed - " + e.getMessage());
+                            }
+                        } else if (nextInput.equals("ADMIN_LOGOUT")) {
+                            // Admin logout
+                            loggedIn = false;
+                            isAdmin = false;
+                            pr.println("Success: Admin logged out");
+                            System.out.println("ADMIN LOGOUT: Admin logged out");
                         }
 
                         //TODO: add password reset ability

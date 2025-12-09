@@ -56,6 +56,7 @@ public class ReservationClient extends JFrame {
 
         buildLoginPanel();
         buildMenuPanel();
+        buildAdminPanel();
 
         add(mainPanel);
         setVisible(true);
@@ -97,8 +98,10 @@ public class ReservationClient extends JFrame {
         JPanel btnRow = new JPanel();
         JButton loginBtn = new JButton("Login");
         JButton signupBtn = new JButton("Sign Up");
+        JButton adminBtn = new JButton("Admin Login");
         btnRow.add(loginBtn);
         btnRow.add(signupBtn);
+        btnRow.add(adminBtn);
         form.add(btnRow);
 
         loginOutputArea = new JTextArea(6, 40);
@@ -181,6 +184,44 @@ public class ReservationClient extends JFrame {
                                 public void run() {
                                     JOptionPane.showMessageDialog(ReservationClient.this, "Network error: " + e.getMessage());
                                     signupBtn.setEnabled(true);
+                                }
+                            });
+                        }
+                    }
+                }).start();
+            }
+        });
+
+        adminBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                adminBtn.setEnabled(false);
+                loginOutputArea.setText("");
+                final String user = loginUserField.getText().trim();
+                final String pass = new String(loginPassField.getPassword());
+
+                new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            pr.println("ADMIN_LOGIN");
+                            pr.println(user);
+                            pr.println(pass);
+                            final String response = br.readLine();
+
+                            SwingUtilities.invokeLater(new Runnable() {
+                                public void run() {
+                                    loginOutputArea.append(response + "\n");
+                                    adminBtn.setEnabled(true);
+
+                                    if (response != null && response.startsWith("Success")) {
+                                        showAdminMenu();
+                                    }
+                                }
+                            });
+                        } catch (IOException e) {
+                            SwingUtilities.invokeLater(new Runnable() {
+                                public void run() {
+                                    JOptionPane.showMessageDialog(ReservationClient.this, "Network error during admin login: " + e.getMessage());
+                                    adminBtn.setEnabled(true);
                                 }
                             });
                         }
@@ -337,6 +378,286 @@ public class ReservationClient extends JFrame {
 
     private void showMenu() {
         cardLayout.show(mainPanel, "Menu");
+    }
+
+    private void showAdminMenu() {
+        cardLayout.show(mainPanel, "AdminPanel");
+    }
+
+    private void buildAdminPanel() {
+        JPanel adminPanel = new JPanel(new BorderLayout(10, 10));
+        adminPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        // Title
+        JLabel titleLabel = new JLabel("Admin Panel - Event Management", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        adminPanel.add(titleLabel, BorderLayout.NORTH);
+
+        // Main content with split pane
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        splitPane.setResizeWeight(0.5);
+
+        // Left panel - Event List
+        JPanel leftPanel = new JPanel(new BorderLayout(5, 5));
+        leftPanel.setBorder(BorderFactory.createTitledBorder("Current Events"));
+        
+        final JTextArea eventListArea = new JTextArea(20, 30);
+        eventListArea.setEditable(false);
+        JScrollPane eventListScroll = new JScrollPane(eventListArea);
+        leftPanel.add(eventListScroll, BorderLayout.CENTER);
+
+        JPanel leftButtonPanel = new JPanel();
+        JButton refreshBtn = new JButton("Refresh Events");
+        leftButtonPanel.add(refreshBtn);
+        leftPanel.add(leftButtonPanel, BorderLayout.SOUTH);
+
+        splitPane.setLeftComponent(leftPanel);
+
+        // Right panel - Add/Delete Events
+        JPanel rightPanel = new JPanel(new BorderLayout(5, 5));
+        
+        // Add Event Section
+        JPanel addEventPanel = new JPanel(new GridLayout(8, 2, 5, 5));
+        addEventPanel.setBorder(BorderFactory.createTitledBorder("Add New Event"));
+
+        addEventPanel.add(new JLabel("Event Name:"));
+        final JTextField eventNameField = new JTextField();
+        addEventPanel.add(eventNameField);
+
+        addEventPanel.add(new JLabel("Price per Ticket:"));
+        final JTextField priceField = new JTextField();
+        addEventPanel.add(priceField);
+
+        addEventPanel.add(new JLabel("Date (epoch day):"));
+        final JTextField dateField = new JTextField();
+        addEventPanel.add(dateField);
+
+        addEventPanel.add(new JLabel("Time (HHMM, e.g., 1830):"));
+        final JTextField timeField = new JTextField();
+        addEventPanel.add(timeField);
+
+        addEventPanel.add(new JLabel("Seating Rows:"));
+        final JTextField rowsField = new JTextField();
+        addEventPanel.add(rowsField);
+
+        addEventPanel.add(new JLabel("Seating Columns:"));
+        final JTextField colsField = new JTextField();
+        addEventPanel.add(colsField);
+
+        addEventPanel.add(new JLabel(""));
+        JButton addEventBtn = new JButton("Add Event");
+        addEventPanel.add(addEventBtn);
+
+        // Delete Event Section
+        JPanel deleteEventPanel = new JPanel(new GridLayout(3, 2, 5, 5));
+        deleteEventPanel.setBorder(BorderFactory.createTitledBorder("Delete Event"));
+
+        deleteEventPanel.add(new JLabel("Event Index (0-based):"));
+        final JTextField deleteIndexField = new JTextField();
+        deleteEventPanel.add(deleteIndexField);
+
+        deleteEventPanel.add(new JLabel(""));
+        JButton deleteEventBtn = new JButton("Delete Event");
+        deleteEventPanel.add(deleteEventBtn);
+        
+        deleteEventPanel.add(new JLabel("")); // spacer
+        deleteEventPanel.add(new JLabel("")); // spacer
+
+        // Combine add and delete panels
+        JPanel formsPanel = new JPanel(new BorderLayout(10, 10));
+        formsPanel.add(addEventPanel, BorderLayout.NORTH);
+        formsPanel.add(deleteEventPanel, BorderLayout.CENTER);
+        
+        rightPanel.add(formsPanel, BorderLayout.CENTER);
+
+        // Logout button at bottom
+        JPanel logoutPanel = new JPanel();
+        JButton logoutBtn = new JButton("Logout");
+        logoutPanel.add(logoutBtn);
+        rightPanel.add(logoutPanel, BorderLayout.SOUTH);
+
+        splitPane.setRightComponent(rightPanel);
+        adminPanel.add(splitPane, BorderLayout.CENTER);
+
+        mainPanel.add(adminPanel, "AdminPanel");
+
+        // Action Listeners
+        refreshBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                refreshBtn.setEnabled(false);
+                new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            pr.println("ADMIN_REFRESH");
+                            final String raw = br.readLine();
+                            SwingUtilities.invokeLater(new Runnable() {
+                                public void run() {
+                                    List<String> events = parseEvents(raw);
+                                    StringBuilder sb = new StringBuilder();
+                                    for (int i = 0; i < events.size(); i++) {
+                                        sb.append("[").append(i).append("] ").append(events.get(i)).append("\n");
+                                    }
+                                    eventListArea.setText(sb.toString());
+                                    refreshBtn.setEnabled(true);
+                                }
+                            });
+                        } catch (IOException ex) {
+                            SwingUtilities.invokeLater(new Runnable() {
+                                public void run() {
+                                    JOptionPane.showMessageDialog(ReservationClient.this, "Network error: " + ex.getMessage());
+                                    refreshBtn.setEnabled(true);
+                                }
+                            });
+                        }
+                    }
+                }).start();
+            }
+        });
+
+        addEventBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                addEventBtn.setEnabled(false);
+                final String name = eventNameField.getText().trim();
+                final String priceStr = priceField.getText().trim();
+                final String dateStr = dateField.getText().trim();
+                final String timeStr = timeField.getText().trim();
+                final String rowsStr = rowsField.getText().trim();
+                final String colsStr = colsField.getText().trim();
+
+                if (name.isEmpty() || priceStr.isEmpty() || dateStr.isEmpty() || 
+                    timeStr.isEmpty() || rowsStr.isEmpty() || colsStr.isEmpty()) {
+                    JOptionPane.showMessageDialog(ReservationClient.this, "All fields are required!");
+                    addEventBtn.setEnabled(true);
+                    return;
+                }
+
+                new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            double price = Double.parseDouble(priceStr);
+                            long date = Long.parseLong(dateStr);
+                            long time = Long.parseLong(timeStr);
+                            int rows = Integer.parseInt(rowsStr);
+                            int cols = Integer.parseInt(colsStr);
+
+                            pr.println("ADMIN_ADD");
+                            pr.println(name);
+                            pr.println(price);
+                            pr.println(date);
+                            pr.println(time);
+                            pr.println(rows);
+                            pr.println(cols);
+
+                            final String response = br.readLine();
+                            SwingUtilities.invokeLater(new Runnable() {
+                                public void run() {
+                                    JOptionPane.showMessageDialog(ReservationClient.this, response);
+                                    if (response != null && response.startsWith("Success")) {
+                                        eventNameField.setText("");
+                                        priceField.setText("");
+                                        dateField.setText("");
+                                        timeField.setText("");
+                                        rowsField.setText("");
+                                        colsField.setText("");
+                                        // Auto-refresh
+                                        refreshBtn.doClick();
+                                    }
+                                    addEventBtn.setEnabled(true);
+                                }
+                            });
+                        } catch (NumberFormatException ex) {
+                            SwingUtilities.invokeLater(new Runnable() {
+                                public void run() {
+                                    JOptionPane.showMessageDialog(ReservationClient.this, "Invalid number format: " + ex.getMessage());
+                                    addEventBtn.setEnabled(true);
+                                }
+                            });
+                        } catch (IOException ex) {
+                            SwingUtilities.invokeLater(new Runnable() {
+                                public void run() {
+                                    JOptionPane.showMessageDialog(ReservationClient.this, "Network error: " + ex.getMessage());
+                                    addEventBtn.setEnabled(true);
+                                }
+                            });
+                        }
+                    }
+                }).start();
+            }
+        });
+
+        deleteEventBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                deleteEventBtn.setEnabled(false);
+                final String indexStr = deleteIndexField.getText().trim();
+
+                if (indexStr.isEmpty()) {
+                    JOptionPane.showMessageDialog(ReservationClient.this, "Please enter an event index!");
+                    deleteEventBtn.setEnabled(true);
+                    return;
+                }
+
+                new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            int index = Integer.parseInt(indexStr);
+
+                            pr.println("ADMIN_DELETE");
+                            pr.println(index);
+
+                            final String response = br.readLine();
+                            SwingUtilities.invokeLater(new Runnable() {
+                                public void run() {
+                                    JOptionPane.showMessageDialog(ReservationClient.this, response);
+                                    if (response != null && response.startsWith("Success")) {
+                                        deleteIndexField.setText("");
+                                        // Auto-refresh
+                                        refreshBtn.doClick();
+                                    }
+                                    deleteEventBtn.setEnabled(true);
+                                }
+                            });
+                        } catch (NumberFormatException ex) {
+                            SwingUtilities.invokeLater(new Runnable() {
+                                public void run() {
+                                    JOptionPane.showMessageDialog(ReservationClient.this, "Invalid index: " + ex.getMessage());
+                                    deleteEventBtn.setEnabled(true);
+                                }
+                            });
+                        } catch (IOException ex) {
+                            SwingUtilities.invokeLater(new Runnable() {
+                                public void run() {
+                                    JOptionPane.showMessageDialog(ReservationClient.this, "Network error: " + ex.getMessage());
+                                    deleteEventBtn.setEnabled(true);
+                                }
+                            });
+                        }
+                    }
+                }).start();
+            }
+        });
+
+        logoutBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                logoutBtn.setEnabled(false);
+                new Thread(new Runnable() {
+                    public void run() {
+                        pr.println("ADMIN_LOGOUT");
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
+                                try {
+                                    br.readLine();
+                                } catch (IOException ex) {
+                                    ex.printStackTrace();
+                                }
+                                JOptionPane.showMessageDialog(ReservationClient.this, "Logged out.");
+                                cardLayout.show(mainPanel, "Login");
+                                logoutBtn.setEnabled(true);
+                            }
+                        });
+                    }
+                }).start();
+            }
+        });
     }
 
     private void startNewReservationFlow(final Runnable finishedCallback) {

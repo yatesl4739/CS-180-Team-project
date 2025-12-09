@@ -34,6 +34,7 @@ public class Event implements EventInterface, Serializable {
         this.timeOfDay = timeOfDay;
         this.day = day;
         this.totalRevenue = 0;
+        this.reservationDB = new ReservationDatabase();
     }
 
     /**
@@ -53,6 +54,7 @@ public class Event implements EventInterface, Serializable {
         this.timeOfDay = timeOfDay;
         this.day = day;
         this.totalRevenue = totalRevenue;
+        this.reservationDB = new ReservationDatabase();
     }
 
 

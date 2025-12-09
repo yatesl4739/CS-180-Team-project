@@ -1,3 +1,5 @@
+import java.io.Serializable;
+
 /**
  * Reservation
  *
@@ -6,7 +8,7 @@
  * @version 11/10/25
  */
 
-public class Reservation implements ReservationInterface{
+public class Reservation implements ReservationInterface, Serializable {
     private User user;
     private int numPeople;
     private long timeOfReservation;
