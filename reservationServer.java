@@ -396,9 +396,11 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                             }
                             int numPeople = Integer.parseInt(rawInput);
 
-                            long time = Long.parseLong(br.readLine());
+                            int chosenIndex = Integer.parseInt(br.readLine());
 
-                            long date = Long.parseLong(br.readLine());
+                            long time = eventDB.get(chosenIndex).getTimeOfDay();
+
+                            long date = eventDB.get(chosenIndex).getDay();
 
                             System.out.println("Number of people entered " + numPeople + " time entered: " + time + " date entered" + date);
 

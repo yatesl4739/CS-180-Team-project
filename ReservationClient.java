@@ -381,7 +381,8 @@ public class ReservationClient extends JFrame {
                                                     return;
                                                 }
                                                 // Show details dialog to get numPeople, time, date
-                                                ReservationDetails details = showDetailsDialog();
+                                                // ReservationDetails details = showDetailsDialog();
+                                                /*
                                                 if (details == null) {
                                                     System.out.println("USER CANCELED AT INFO INPUT PAGE");
                                                     pr.println("********CANCEL********");
@@ -389,13 +390,13 @@ public class ReservationClient extends JFrame {
                                                     if (finishedCallback != null) finishedCallback.run();
                                                     return;
                                                 }
+                                                */
                                                 // After details entered, send details and seats in background thread
                                                 new Thread(new Runnable() {
                                                     public void run() {
                                                         try {
-                                                            pr.println(String.valueOf(details.numPeople));
-                                                            pr.println(details.timeStr);
-                                                            pr.println(details.dateStr);
+                                                            pr.println(selected.size());
+                                                            pr.println(chosenIndex);
                                                             String seatStr = buildSeatString(selected); // "x1,y1,x2,y2"
                                                             pr.println(seatStr);
                                                             final String finalResp = br.readLine();
