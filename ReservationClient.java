@@ -3,6 +3,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.Socket;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -29,6 +31,7 @@ public class ReservationClient extends JFrame {
 
     private static final String HOST = "localhost";   // host address for server
     private static final int PORT = 4242;             // port number for server
+    private static final DateTimeFormatter EVENT_DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM dd, yyyy");
 
     private Socket socket;
     private BufferedReader br;
@@ -595,10 +598,14 @@ public class ReservationClient extends JFrame {
             }
             String display = name;
             if (!day.isEmpty()) {
-
-                //handle epoch counter
-                //TODO: handle epoch stuff
-                display += " on " + day;
+                try {
+                    long epochDay = Long.parseLong(day);
+                    LocalDate localDate = LocalDate.ofEpochDay(epochDay);
+                    display += " on " + localDate.format(EVENT_DATE_FORMATTER);
+                } catch (NumberFormatException ex) {
+                   // if there is an error with epoch show just the # idk
+                    display += " on " + day;
+                }
             }
 
             if (!time.isEmpty()) {
@@ -663,4 +670,3 @@ public class ReservationClient extends JFrame {
 
 
 }
-
