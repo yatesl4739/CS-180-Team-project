@@ -162,7 +162,7 @@ public class EventDatabaseTest {
                 {'o', 'o', 'o', 'o'},
                 {'o', 'o', 'o', 'o'},
                 {'o', 'o', 'o', 'o'},
-                {'o', 'x', 'x', 'o'}}, 720, date + 10);
+                {'o', 'x', 'x', 'o'}}, 720, date + 100);
 
         ArrayList<Event> listOfEvents = new ArrayList<Event>();
         listOfEvents.add(singleEvent);

@@ -429,10 +429,11 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                             int[] y = new int[xy.length / 2];
 
                             for (int i = 0; i < xy.length; i++) {
+                                int value = Integer.parseInt(xy[i]);
                                 if (i % 2 == 0) {
-                                    x[i / 2] = Integer.parseInt(xy[i]);
+                                    y[i / 2] = value;
                                 } else {
-                                    y[i / 2] = Integer.parseInt(xy[i]);
+                                    x[i / 2] = value;
                                 }
                             }
 
@@ -527,4 +528,3 @@ public class reservationServer implements Runnable, ReservationServerInterface {
         }
     }
 }
-
