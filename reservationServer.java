@@ -19,10 +19,11 @@ import java.util.concurrent.*;
  */
 
 public class reservationServer implements Runnable, ReservationServerInterface {
-    //venue has an events database
-    //events database has a reservation database
-    private static volatile Venue venue1 = new Venue();  //  the venue the user is accessing
-    private static volatile UserDatabase usrDB = new UserDatabase();  //  a list of all users created
+
+    // venue has an events database
+    // events database has a reservation database
+    private static volatile Venue venue1 = new Venue();          // the venue the user is accessing
+    private static volatile UserDatabase usrDB = new UserDatabase(); // a list of all users created
 
     private ServerSocket serverSocket;  //  the serversocket used to connect to the client
     private boolean running = false;  //  boolean value for checking if the server is running
@@ -34,7 +35,7 @@ public class reservationServer implements Runnable, ReservationServerInterface {
     /**
      * Creates the server with a specific port to connect to the client
      *
-     * @param port
+     * @param port port number
      */
     public reservationServer(int port) {
 
@@ -428,12 +429,10 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                             int[] y = new int[xy.length / 2];
 
                             for (int i = 0; i < xy.length; i++) {
-                                int value = Integer.parseInt(xy[i]);
                                 if (i % 2 == 0) {
-                                    // client sends column first, but server expects row first
-                                    y[i / 2] = value;
+                                    x[i / 2] = Integer.parseInt(xy[i]);
                                 } else {
-                                    x[i / 2] = value;
+                                    y[i / 2] = Integer.parseInt(xy[i]);
                                 }
                             }
 
@@ -518,7 +517,17 @@ public class reservationServer implements Runnable, ReservationServerInterface {
 
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                try {
+                    socket.close();
+                } catch (IOException ignored) {}
+
+                synchronized (clients) {
+                    clients.remove(socket);
+                }
+                System.out.println("Client disconnected. Active clients: " + getClientCount());
             }
         }
     }
 }
+

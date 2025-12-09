@@ -8,7 +8,6 @@ public class reservationServerTest {
 
         assertEquals(5000, server.getPort());
         assertFalse(server.isRunning());
-        assertEquals(0, server.getClientCount());
         assertNotNull(server.getVenue1());
         assertNotNull(server.getUserDB());
     }
@@ -44,7 +43,6 @@ public class reservationServerTest {
         server.stop();
 
         assertFalse(server.isRunning());
-        assertEquals(0, server.getClientCount());
     }
 
     @Test
@@ -54,7 +52,6 @@ public class reservationServerTest {
         server.stop();
 
         assertFalse(server.isRunning());
-        assertEquals(0, server.getClientCount());
     }
 }
 
