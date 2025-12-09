@@ -440,7 +440,7 @@ public class reservationServer implements Runnable, ReservationServerInterface {
                             venue1.getEventDatabase().getEvents().get(eventSelect)
                                     .createReservation(x, y, clientUser, numPeople, time, date);
 
-
+                            pr.println("Reservation created!!");
                         }
 
                         //user can see all their reservations

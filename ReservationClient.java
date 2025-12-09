@@ -403,7 +403,7 @@ public class ReservationClient extends JFrame {
                                                             SwingUtilities.invokeLater(new Runnable() {
                                                                 public void run() {
                                                                     JOptionPane.showMessageDialog(ReservationClient.this,
-                                                                            "Server response: " + finalResp);
+                                                                             finalResp);
                                                                     if (finishedCallback != null) finishedCallback.run();
                                                                 }
                                                             });
